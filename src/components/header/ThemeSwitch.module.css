@@ -1,0 +1,37 @@
+.track {
+  background-color: transparent;
+  border: 2px solid var(--accent-main);
+  border-radius: 100vh;
+  height: 1.7rem;
+  width: 3rem;
+  display: flex;
+  align-items: center;
+  justify-content: right;
+  cursor: pointer;
+}
+
+.circle {
+  width: 1.7rem;
+  height: 1.7rem;
+  background-color: var(--accent-main);
+  border-radius: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  position: relative;
+}
+
+.transition {
+  transition: 0.3s;
+}
+
+.icon {
+  color: white;
+  font-size: 1.4rem;
+  max-width: 65%;
+  max-height: 65%;
+  opacity: 0.7;
+  color: white;
+  position: absolute;
+}

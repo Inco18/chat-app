@@ -1,0 +1,74 @@
+.innerContainer {
+  width: inherit;
+  padding-right: 1.2rem;
+}
+
+.optionsContainer {
+  margin-bottom: 0.5rem;
+}
+
+.optionsHeader {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  opacity: 0.7;
+  font-size: 1.2rem;
+  cursor: pointer;
+  margin-bottom: 1rem;
+  transition: opacity 0.1s;
+}
+
+.optionsHeader:hover,
+.optionsHeader:focus-visible {
+  opacity: 1;
+}
+
+.arrow {
+  height: 1rem;
+  width: 1rem;
+  transform: rotate(90deg);
+  transition: transform 0.3s;
+}
+
+.option {
+  display: grid;
+  grid-template-columns: 2rem auto;
+  opacity: 0.7;
+  align-items: center;
+  cursor: pointer;
+  transition: opacity 0.1s;
+}
+
+.option:hover,
+.option:focus-visible {
+  opacity: 1;
+}
+
+.optionsInnerContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  overflow-y: auto;
+  margin-bottom: 1rem;
+}
+
+.themeColor {
+  width: 0.9rem;
+  height: 0.9rem;
+  border-radius: 100vw;
+  background-color: var(--accent-main);
+  margin: 0 auto;
+}
+
+.nicknameLetters {
+  margin: 0 auto;
+  font-weight: 200;
+}
+
+.optionImg {
+  height: 1rem;
+  width: 1rem;
+  color: var(--text);
+  margin: auto;
+}

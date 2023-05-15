@@ -1,0 +1,25 @@
+.themesContainer {
+  display: grid;
+  grid-template-columns: auto auto auto auto;
+}
+
+.theme {
+  padding: 0.5rem;
+  background-color: transparent;
+  outline: none;
+  border: none;
+  cursor: pointer;
+  border-radius: 1rem;
+  transition: 0.1s;
+}
+
+.theme:hover,
+.theme:focus-visible {
+  background-color: var(--accent-vlight);
+}
+
+.themeColor {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 100vw;
+}

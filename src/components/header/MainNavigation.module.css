@@ -1,0 +1,53 @@
+.container {
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 3rem;
+  width: fit-content;
+}
+
+.navlink {
+  text-decoration: none;
+  color: var(--text);
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 1rem;
+  opacity: 70%;
+  transition: opacity 0.2s, transform 0.2s;
+}
+
+.navlink:hover,
+.navlink:focus-visible {
+  opacity: 100%;
+  transform: scale(1.05);
+}
+
+.Icon {
+  width: 2rem;
+  height: 2rem;
+  color: var(--text);
+  font-size: 2rem;
+}
+
+.active {
+  color: var(--nav);
+  opacity: 100%;
+}
+
+.active .Icon {
+  color: var(--nav);
+}
+
+.bar {
+  position: absolute;
+  background-color: var(--nav);
+  height: 0.3rem;
+  top: -0.3rem;
+  border-radius: 0 0 1rem 1rem;
+}
+
+.transition {
+  transition: 0.5s;
+}

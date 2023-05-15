@@ -1,0 +1,213 @@
+.inputContainer {
+  background-color: var(--accent-dark);
+  margin: 1rem;
+  padding: 0.5rem 1rem;
+  gap: 1rem;
+  border-radius: 1.2rem;
+  position: relative;
+}
+
+.filesPreviewContainer {
+  padding: 1rem 0;
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
+  overflow-x: auto;
+}
+
+.fileImgElement {
+  height: 3.5rem;
+  max-width: 10rem;
+  border-radius: 1rem;
+  position: relative;
+}
+
+.fileImgElement img {
+  border-radius: 1rem;
+  max-width: 100%;
+  max-height: 100%;
+}
+
+.removeImgElement:hover {
+  background-color: var(--accent-vlight);
+}
+
+.fileElement {
+  max-width: 10rem;
+  display: grid;
+  grid-template-columns: auto auto;
+  place-items: center;
+  gap: 0.5rem;
+  background-color: var(--dark);
+  padding: 0.5rem;
+  border-radius: 1rem;
+  position: relative;
+  height: 3.5rem;
+}
+
+.fileElementText {
+  max-width: calc(10rem - 1rem - 1.5rem);
+  word-break: break-all;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  white-space: pre-wrap;
+  font-size: 0.9rem;
+}
+
+.fileImg {
+  height: 1.5rem;
+  width: 1.5rem;
+  color: var(--text);
+}
+
+.removeImg {
+  height: 1.5rem;
+  width: 1.5rem;
+  color: var(--text);
+  position: absolute;
+  cursor: pointer;
+  right: -0.5rem;
+  top: -0.5rem;
+  background-color: var(--accent-light);
+  border-radius: 100vw;
+  transition: background-color 0.3s;
+}
+
+.removeImg:hover {
+  background-color: var(--accent-vlight);
+}
+
+.mainContainer {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.textInput {
+  background: transparent;
+  border: none;
+  width: 100%;
+  outline: none;
+  resize: none;
+}
+
+.imagesContainer {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  position: relative;
+}
+
+.inputImg {
+  width: 1.7rem;
+  height: 1.7rem;
+  cursor: pointer;
+  transition: opacity 0.1s;
+}
+
+.inputImg:hover {
+  opacity: 1;
+}
+
+.sendContainer {
+  background-color: var(--nav);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.7rem;
+  padding: 0.2rem;
+  cursor: pointer;
+}
+
+.sendContainer .inputImg {
+  width: 1.7rem;
+  height: 1.7rem;
+  opacity: 1;
+}
+
+.dropDiv {
+  position: absolute;
+  inset: 0;
+  background-color: var(--dark);
+  opacity: 0.7;
+  backdrop-filter: blur(50px);
+  border-radius: 1.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  font-weight: 500;
+}
+
+.errorsContainer {
+  position: absolute;
+  bottom: 100%;
+  color: white;
+  padding: 0.5rem;
+  border-radius: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  width: 50%;
+  text-align: center;
+}
+
+.error {
+  background-color: rgba(128, 1, 1, 0.9);
+  padding: 0.5rem;
+  border-radius: 1rem;
+  box-shadow: 0 0 20px -10px var(--dark);
+}
+
+.errorEnter {
+  opacity: 0;
+  transform: translateX(-10rem);
+}
+
+.errorEnterActive {
+  transform: translateX(0);
+  opacity: 1;
+  transition: 0.5s;
+}
+
+.errorExit {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.errorExitActive {
+  opacity: 0;
+  transform: translateX(-10rem);
+  transition: 0.5s;
+}
+
+.emojiPickerContainer {
+  position: absolute;
+  bottom: 4rem;
+  right: 1rem;
+}
+
+.emojiEnter {
+  opacity: 0;
+  transform: translateY(1rem);
+}
+
+.emojiEnterActive {
+  transform: translateY(0);
+  opacity: 1;
+  transition: 0.3s;
+}
+
+.emojiExit {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.emojiExitActive {
+  opacity: 0;
+  transform: translateY(1rem);
+  transition: 0.3s;
+}

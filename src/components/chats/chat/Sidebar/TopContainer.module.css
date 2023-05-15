@@ -1,0 +1,60 @@
+.topContainer {
+  background-color: var(--accent-main);
+  padding: 1rem;
+  border-radius: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.chatWithContainer {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.chatWithContainer img {
+  width: 3rem;
+  border-radius: 100vw;
+}
+
+.chatWithContainer p {
+  font-size: 1.2rem;
+}
+
+.actionsContainer {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.actionContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.iconContainer {
+  padding: 0.4rem;
+  background-color: var(--accent-main-light);
+  display: flex;
+  border-radius: 0.9rem;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.iconContainer:hover,
+.iconContainer:focus-visible {
+  background-color: var(--accent-main-light-hover);
+}
+
+.iconContainer * {
+  width: 2rem;
+  height: 2rem;
+}
+
+.actionContainer p {
+  font-size: 0.8rem;
+}

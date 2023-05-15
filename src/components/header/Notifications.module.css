@@ -1,0 +1,117 @@
+.container {
+  position: relative;
+}
+.bellContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  border-radius: 100vw;
+  padding: 0.3rem;
+}
+
+.bellContainer:hover,
+.bellContainer:focus-visible {
+  background-color: var(--accent-light);
+}
+
+.bell {
+  width: 1.8rem;
+  height: 1.8rem;
+  color: var(--text);
+  cursor: pointer;
+}
+
+.dot {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  background-color: var(--nav);
+  border-radius: 100%;
+  right: 10px;
+  top: 5px;
+}
+
+.notifications {
+  position: absolute;
+  background-color: var(--background);
+  top: 3.5rem;
+  right: 0;
+  width: 25rem;
+  border-radius: 1.5rem;
+  overflow: hidden;
+  color: var(--text);
+  border: 1px solid var(--dark);
+  box-shadow: 0 0 20px -10px var(--dark);
+  z-index: 999;
+}
+
+.notificationsInner {
+  height: 100%;
+  padding: 1rem;
+  overflow: auto;
+}
+
+.enter {
+  opacity: 0;
+  transform: translateY(-0.6rem);
+}
+
+.enterActive {
+  transform: translateY(0);
+  opacity: 1;
+  transition: 0.3s;
+}
+
+.exit {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.exitActive {
+  opacity: 0;
+  transform: translateY(-0.6rem);
+  transition: 0.3s;
+}
+
+.emptyText {
+  text-align: center;
+  font-size: 1.5rem;
+  font-weight: 500;
+}
+
+.messageNotification {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  justify-content: flex-start;
+  gap: 1rem;
+  padding: 1rem 0.5rem;
+  cursor: pointer;
+  border-radius: 1.5rem;
+}
+
+.messageNotification:hover,
+.messageNotification:focus-visible {
+  background-color: var(--accent-light);
+}
+
+.messageNotification img {
+  max-height: 3rem;
+  border-radius: 100vw;
+}
+
+.notificationRightBlock {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+}
+
+.bold {
+  font-weight: 600;
+}
+
+.notificationDate {
+  font-size: 0.8rem;
+}

@@ -1,0 +1,36 @@
+{
+  "name": "chat-app",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "emoji-picker-react": "^4.4.8",
+    "gif-picker-react": "^1.1.0",
+    "react": "^18.2.0",
+    "react-animate-height": "^3.1.1",
+    "react-dom": "^18.2.0",
+    "react-lazy-load-image-component": "^1.5.6",
+    "react-loader-spinner": "^5.3.4",
+    "react-modal": "^3.16.1",
+    "react-router-dom": "^6.8.1",
+    "react-textarea-autosize": "^8.4.1",
+    "react-transition-group": "^4.4.5",
+    "vite-plugin-svgr": "^2.4.0",
+    "yet-another-react-lightbox": "^3.6.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.0.27",
+    "@types/react-dom": "^18.0.10",
+    "@types/react-lazy-load-image-component": "^1.5.3",
+    "@types/react-modal": "^3.16.0",
+    "@types/react-transition-group": "^4.4.5",
+    "@vitejs/plugin-react": "^3.1.0",
+    "typescript": "^4.9.3",
+    "vite": "^4.1.0"
+  }
+}

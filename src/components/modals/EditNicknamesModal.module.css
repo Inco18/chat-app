@@ -1,0 +1,67 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  list-style: none;
+  list-style-position: outside;
+  padding: 0;
+  margin: 0;
+  min-width: 20rem;
+}
+
+.person {
+  margin: 0;
+  padding: 0.5rem;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 1rem;
+  transition: 0.1s;
+  cursor: pointer;
+  border-radius: 1rem;
+}
+
+.person:hover,
+.person:focus-visible {
+  background-color: var(--accent-vlight);
+  outline: none;
+}
+
+.person img {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 100vw;
+}
+
+.editImg {
+  width: 1.5rem;
+  height: 1.5rem;
+  color: var(--text);
+  opacity: 0.7;
+  margin-left: auto;
+  transition: 0.1s;
+}
+
+.form {
+  width: 100%;
+  display: flex;
+  align-items: center;
+}
+
+.input {
+  outline: none;
+  border: 1px solid var(--accent-main);
+  padding: 0.2rem 0.5rem;
+  border-radius: 0.5rem;
+  background-color: transparent;
+}
+
+.input::placeholder {
+  color: var(--text);
+  opacity: 0.5;
+}
+
+.checkImg:hover {
+  border-radius: 100vw;
+  background-color: var(--accent-dark);
+}

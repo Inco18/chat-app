@@ -1,0 +1,15 @@
+.mainContainer {
+  border: 3px solid var(--dark);
+  background-color: var(--background);
+  width: 100%;
+  padding: 1rem 1rem 0 1rem;
+  display: grid;
+  grid-template-columns: auto auto auto;
+  overflow: hidden;
+}
+
+@media (max-width: 1400px) {
+  .mainContainer {
+    padding: 1rem 1rem 0 0.5rem;
+  }
+}

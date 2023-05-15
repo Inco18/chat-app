@@ -1,0 +1,164 @@
+.listContainer {
+  max-width: 18rem;
+  position: relative;
+  transition: 0.3s;
+  max-height: 100%;
+  display: flex;
+  flex-direction: column;
+  /* display: grid;
+  grid-template-rows: 6rem auto; */
+  overflow: hidden;
+}
+
+.arrowIcon {
+  position: absolute;
+  width: 1rem;
+  height: 1rem;
+  top: 0;
+  right: 0;
+  opacity: 0.7;
+  transform: rotate(180deg);
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.thin {
+  max-width: calc(1.45rem + 4rem);
+}
+
+.thin .arrowIcon {
+  transform: rotate(0);
+}
+
+.inputContainer {
+  width: calc(100% - 1rem);
+  background-color: var(--accent-dark);
+  display: grid;
+  grid-template-columns: auto auto;
+  place-items: center;
+  column-gap: 1rem;
+  border-radius: 1.2rem;
+  padding: 0.9rem;
+  margin-bottom: 2rem;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.searchInput {
+  background: transparent;
+  outline: none;
+  border: none;
+}
+
+.searchInput::placeholder {
+  opacity: 0.7;
+  color: var(--text);
+  font-weight: 300;
+}
+
+.inputContainer:focus-within .inputImg {
+  opacity: 1;
+  transform: scale(1.2);
+}
+
+.inputImg {
+  color: var(--text);
+  opacity: 0.5;
+  height: 1.6rem;
+  width: 1.6rem;
+  transition: opacity 0.3s, transform 0.3s, margin 0.3s;
+}
+
+.thin .inputImg {
+  margin: 0 0.6rem;
+}
+
+.chatsOuter {
+  max-height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  margin-right: -1rem;
+  width: 17rem;
+  transition: 0.3s;
+}
+
+.thin .chatsOuter {
+  width: calc(1.45rem + 4rem);
+}
+
+.chatsInner {
+  width: inherit;
+  padding-right: 1rem;
+}
+
+.navlink {
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
+  padding: 0.7rem;
+  border-radius: 1rem;
+  text-decoration: none;
+  color: var(--text);
+  margin-bottom: 0.5rem;
+  width: 100%;
+  overflow: hidden;
+  height: min-content;
+  transition: background-color 0.2s;
+  position: relative;
+}
+
+.navlink.active {
+  background-color: var(--accent-light);
+}
+
+.navlink:hover,
+.navlink:focus-visible {
+  background-color: var(--accent-light);
+}
+
+.profileImg {
+  height: 3rem;
+  border-radius: 100vw;
+}
+
+.profileRightContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: end;
+  overflow: hidden;
+}
+
+.name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.lastMsg {
+  opacity: 0.7;
+  font-size: 0.8rem;
+  font-weight: 300;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.unread {
+  font-weight: 600;
+  position: relative;
+}
+
+.dot {
+  background-color: var(--nav);
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  border-radius: 100vw;
+  top: 50%;
+  right: 5px;
+  transition: 0.3s;
+}
+
+.thin .dot {
+  top: 5px;
+}

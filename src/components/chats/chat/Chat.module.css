@@ -1,0 +1,191 @@
+.container {
+  background-color: var(--accent-medium);
+  border-radius: 1.5rem 1.5rem 0 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  overflow: hidden;
+  transition: 0.3s;
+  margin-left: 0.5rem;
+}
+
+.topBar {
+  background-color: var(--dark);
+  display: flex;
+  padding: 0.5rem 1rem;
+  justify-content: space-between;
+  border-radius: 1.5rem 1.5rem 0 0;
+}
+
+.topBarLeft {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 1rem;
+}
+
+.topBarLeft img {
+  height: 1.6rem;
+  border-radius: 100vw;
+}
+
+.topBarLeft span {
+  opacity: 0.7;
+  font-weight: 300;
+}
+
+.topBarLeft p .bold {
+  opacity: 1;
+  font-weight: 400;
+}
+
+.dots {
+  height: 1.5rem;
+  width: 1.5rem;
+  color: var(--text);
+  cursor: pointer;
+  margin: auto 0;
+}
+
+.sidebar {
+  position: relative;
+  width: 20rem;
+  margin-left: 1.5rem;
+  max-height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  margin-right: -1rem;
+}
+
+.sidebarEnter {
+  transform: translateX(10rem);
+  max-width: 0;
+  margin-left: 0;
+}
+.sidebarEnterActive {
+  transform: translateX(0);
+  max-width: 20rem;
+  margin-left: 1.5rem;
+  transition: 0.5s;
+}
+.sidebarExit {
+  transform: translateX(0);
+  margin-left: 1.5rem;
+  max-width: 20rem;
+}
+.sidebarExitActive {
+  transform: translateX(10rem);
+  max-width: 0;
+  margin-left: 0;
+  transition: 0.5s;
+}
+
+@media (max-width: 1400px) {
+  .sidebar {
+    margin-left: 1rem;
+  }
+  .sidebarEnter {
+    margin-left: 0;
+  }
+  .sidebarEnterActive {
+    margin-left: 1rem;
+  }
+  .sidebarExit {
+    margin-left: 1rem;
+  }
+  .sidebarExitActive {
+    margin-left: 0;
+  }
+}
+
+.searchContainer {
+  display: grid;
+  grid-template-columns: auto max-content;
+  gap: 1rem;
+  background-color: var(--dark);
+  padding: 0.5rem;
+}
+
+.searchForm {
+  gap: 0.5rem;
+  width: 100%;
+}
+
+.inputContainer {
+  display: grid;
+  grid-template-columns: auto min-content;
+  align-items: center;
+  padding: 0 0 0 0.5rem;
+  background-color: var(--accent-dark);
+  border-radius: 100vw;
+  gap: 0.5rem;
+}
+
+.searchInput {
+  background-color: transparent;
+  border: none;
+}
+
+.searchInput:focus {
+  outline: none;
+}
+
+.submitButton {
+  width: 2rem;
+  height: 2rem;
+  border: none;
+  background-color: var(--accent-main);
+  border-radius: 100vw;
+  padding: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: 0.1s;
+}
+
+.submitButton:hover {
+  background-color: var(--accent-main-hover);
+}
+
+.buttonIcon {
+  width: 100%;
+  height: 100%;
+}
+
+.searchRightContainer {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.foundNumber {
+  font-size: 0.8rem;
+  opacity: 0.7;
+}
+
+.arrow {
+  width: 0.8rem;
+  height: 0.8rem;
+  opacity: 0.7;
+}
+
+.closeIcon {
+  width: 1.5rem;
+  height: 1.5rem;
+  cursor: pointer;
+  border-radius: 100vw;
+}
+
+.closeIcon:hover {
+  background-color: var(--accent-vlight);
+}
+
+.chatInputHidden {
+  text-align: center;
+  padding: 0.5rem;
+  background-color: var(--dark);
+  opacity: 0.7;
+  font-weight: 300;
+}

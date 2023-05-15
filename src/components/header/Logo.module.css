@@ -1,0 +1,25 @@
+.container {
+  color: var(--text);
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
+  align-items: center;
+  width: fit-content;
+  pointer-events: none;
+}
+
+.logoIcon {
+  height: 2.5rem;
+  width: 2.5rem;
+  transform: scaleX(-1);
+  fill: var(--text);
+}
+
+.name {
+  font-size: 1.3rem;
+  font-weight: 600;
+}
+
+.span {
+  font-weight: 400;
+}

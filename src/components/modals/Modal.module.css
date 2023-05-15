@@ -1,0 +1,60 @@
+.modal {
+  background-color: var(--accent-medium);
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  padding: 1rem;
+  border-radius: 1rem;
+  outline: none;
+  box-shadow: 0 0 20px -5px var(--accent-medium);
+  scale: 0.5;
+  opacity: 0;
+  transition: 0.3s;
+  transform-origin: top left;
+}
+
+.modalAfterOpen {
+  scale: 1;
+  opacity: 1;
+}
+
+.modalBeforeClose {
+  scale: 0.5;
+  opacity: 0;
+}
+
+.modal h3 {
+  text-align: center;
+  margin-bottom: 0.5rem;
+}
+
+.modalOverlay {
+  background-color: var(--backgroundAlpha);
+  position: fixed;
+  inset: 0;
+  opacity: 0;
+  backdrop-filter: blur(2px);
+  transition: 0.3s;
+}
+
+.modalOverlayAfterOpen {
+  opacity: 1;
+}
+
+.modalOverlayBeforeClose {
+  opacity: 0;
+}
+
+.closeImg {
+  position: absolute;
+  width: 1.5rem;
+  height: 1.5rem;
+  top: -0.5rem;
+  right: -0.5rem;
+  transform: rotate(45deg);
+  background-color: var(--accent-dark);
+  border-radius: 100vw;
+  padding: 0.2rem;
+  cursor: pointer;
+}

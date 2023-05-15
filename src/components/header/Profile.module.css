@@ -1,0 +1,78 @@
+.container {
+  height: 2.5rem;
+  position: relative;
+}
+
+.nameImg {
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  font-weight: 300;
+  cursor: pointer;
+  height: 100%;
+  padding: 0 1rem;
+  border-radius: 100vw;
+  transition: background-color 0.1s;
+}
+
+.nameImg:hover,
+.nameImg:focus-visible {
+  background-color: var(--accent-light);
+}
+
+.img {
+  max-height: 2rem;
+  border-radius: 100vw;
+}
+
+.options {
+  position: absolute;
+  background-color: var(--background);
+  top: 3.5rem;
+  width: 100%;
+  padding: 0.5rem;
+  border-radius: 1.5rem;
+  border: 1px solid var(--dark);
+  box-shadow: 0 0 20px -10px var(--dark);
+  z-index: 999;
+}
+
+.enter {
+  opacity: 0;
+  transform: translateY(-0.6rem);
+}
+
+.enterActive {
+  transform: translateY(0);
+  opacity: 1;
+  transition: 0.3s;
+}
+
+.exit {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.exitActive {
+  opacity: 0;
+  transform: translateY(-0.6rem);
+  transition: 0.3s;
+}
+
+.options button {
+  color: var(--text);
+  width: 100%;
+  padding: 0.5rem;
+  border-radius: 1.5rem;
+  cursor: pointer;
+  background-color: var(--background);
+  border: none;
+  transition: background-color 0.2s;
+}
+
+.options button:hover,
+.options button:focus-visible {
+  background-color: var(--dark);
+}

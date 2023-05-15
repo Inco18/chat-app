@@ -1,0 +1,137 @@
+.container {
+  position: absolute;
+  height: 100%;
+  width: 20rem;
+  top: 0;
+  left: 0;
+  background-color: var(--background);
+  overflow-y: auto;
+  overflow-x: hidden;
+  margin-right: -1rem;
+}
+
+.attachmentsEnter {
+  transform: translateX(20rem);
+}
+.attachmentsEnterActive {
+  transform: translateX(0);
+  transition: 0.3s;
+}
+.attachmentsExit {
+  transform: translateX(0);
+}
+.attachmentsExitActive {
+  transform: translateX(20rem);
+  transition: 0.3s;
+}
+
+.innerContainer {
+  width: inherit;
+  padding-right: 1.2rem;
+}
+
+.topContainer {
+  display: flex;
+  align-items: center;
+  font-size: 1.2rem;
+  margin-bottom: 1rem;
+  gap: 1rem;
+}
+
+.closeIcon {
+  width: 2rem;
+  height: 2rem;
+  cursor: pointer;
+  border-radius: 100vw;
+}
+
+.closeIcon:hover,
+.closeIcon:focus-visible {
+  background-color: var(--accent-vlight);
+  outline: none;
+}
+
+.navContainer {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.navButton {
+  background-color: transparent;
+  outline: none;
+  border: none;
+  cursor: pointer;
+}
+
+.navButton.active {
+  font-weight: 600;
+  border-bottom: 2px solid var(--accent-main);
+}
+
+.navButton:hover:not(.active) {
+  border-bottom: 1px solid var(--accent-main);
+}
+
+.photosContainer {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 0.2rem;
+  place-items: center;
+}
+
+.photosContainer img {
+  aspect-ratio: 1/1;
+  object-fit: cover;
+  cursor: pointer;
+  transition: 0.1s;
+}
+
+.photosContainer img:hover {
+  filter: brightness(75%);
+}
+
+.filesContainer {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.file {
+  display: grid;
+  grid-template-columns: min-content auto;
+  align-items: center;
+  gap: 1rem;
+  border-radius: 1rem;
+  cursor: pointer;
+}
+
+.file:hover {
+  background-color: var(--accent-dark);
+}
+
+.fileIcon {
+  width: 2.5rem;
+  height: 2.5rem;
+  background-color: var(--accent-vlight);
+  padding: 0.6rem;
+  border-radius: 1rem;
+}
+
+.fileName {
+  font-weight: 500;
+  height: 1lh;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 50%;
+}
+
+.fileSize {
+  opacity: 0.7;
+  font-size: 0.8rem;
+}

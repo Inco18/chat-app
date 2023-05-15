@@ -1,0 +1,22 @@
+.header {
+  background-color: var(--background);
+  padding: 0 1rem;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  height: 3rem;
+}
+
+.leftBlock {
+  display: flex;
+  justify-content: right;
+  align-items: center;
+  gap: 5rem;
+}
+
+.rightBlock {
+  display: flex;
+  justify-content: right;
+  align-items: center;
+  gap: 1.5rem;
+}
