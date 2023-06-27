@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import useWindowSize from "../../hooks/useWindowSize";
 import { ReactComponent as Magnifier } from "../../assets/magnifier.svg";
 import { ReactComponent as Arrow } from "../../assets/arrow.svg";
@@ -12,6 +12,7 @@ const ChatsList = (props: { type: String }) => {
   const [thinList, setThinList] = useState<boolean>(false);
   const windowSize = useWindowSize();
   const inputRef = useRef<HTMLInputElement>(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (windowSize.width) {
@@ -19,6 +20,10 @@ const ChatsList = (props: { type: String }) => {
       else setThinList(true);
     }
   }, [windowSize]);
+
+  useEffect(() => {
+    navigate("1");
+  }, []);
 
   return (
     <div className={`${styles.listContainer} ${thinList ? styles.thin : ""}`}>

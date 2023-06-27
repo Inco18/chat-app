@@ -13,6 +13,8 @@ import Settings from "./pages/Settings";
 import ReactModal from "react-modal";
 import Favourites from "./pages/Favourites";
 import Archived from "./pages/Archived";
+import Blocked from "./pages/Blocked";
+import Trash from "./pages/Trash";
 
 const router = createBrowserRouter([
   {
@@ -38,8 +40,16 @@ const router = createBrowserRouter([
             element: <Archived />,
             children: [{ path: ":chatId", element: <Chat /> }],
           },
-          { path: "blocked", element: <p>blocked</p> },
-          { path: "trash", element: <p>trash</p> },
+          {
+            path: "blocked",
+            element: <Blocked />,
+            children: [{ path: ":chatId", element: <Chat /> }],
+          },
+          {
+            path: "trash",
+            element: <Trash />,
+            children: [{ path: ":chatId", element: <Chat /> }],
+          },
           { path: "", element: <Navigate to={"all"} replace /> },
         ],
       },

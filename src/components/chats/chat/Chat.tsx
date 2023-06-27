@@ -25,8 +25,6 @@ const Chat = () => {
   const sidebarRef = useRef<HTMLDivElement>(null);
   const { pathname } = useLocation();
 
-  console.log(location);
-
   return (
     <>
       <div className={styles.container}>

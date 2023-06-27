@@ -1,8 +1,6 @@
 import React, { ForwardedRef, useReducer } from "react";
 import { ReactComponent as Pictures } from "../../../assets/pictures.svg";
 import { ReactComponent as File } from "../../../assets/file.svg";
-
-import styles from "./ChatSidebar.module.css";
 import AnimateHeight from "react-animate-height";
 import Attachments from "./Attachments";
 import TopContainer from "./Sidebar/TopContainer";
@@ -10,6 +8,9 @@ import EventsList from "./Sidebar/EventsList";
 import Other from "./Sidebar/Other";
 import Customize from "./Sidebar/Customize";
 import OptionHeader from "./Sidebar/OptionHeader";
+
+import styles from "./ChatSidebar.module.css";
+import { useLocation } from "react-router-dom";
 
 export type stateType = {
   attachmentsVisible: boolean;
@@ -50,13 +51,16 @@ const ChatSidebar = React.forwardRef(
       attachmentsContainerVisible: false,
       initialAttachments: "photos",
     });
+    const { pathname } = useLocation();
 
     return (
       <div className={props.className} ref={ref}>
         <div className={styles.innerContainer}>
           <TopContainer toggleSearchInput={props.toggleSearchInput} />
           <div className={styles.optionsContainer}>
-            <Customize />
+            {!pathname.includes("archived") &&
+              !pathname.includes("blocked") &&
+              !pathname.includes("trash") && <Customize />}
 
             <OptionHeader
               onClick={() => {
@@ -97,7 +101,7 @@ const ChatSidebar = React.forwardRef(
               </div>
             </AnimateHeight>
 
-            <Other />
+            {!pathname.includes("trash") && <Other />}
             <EventsList />
           </div>
         </div>
