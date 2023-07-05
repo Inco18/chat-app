@@ -1,0 +1,32 @@
+.sideNav {
+  background-color: var(--dark);
+  max-width: 15rem;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  align-items: center;
+  position: relative;
+  transition: 0.3s;
+}
+
+.arrowIcon {
+  position: absolute;
+  width: 1rem;
+  height: 1rem;
+  top: 0.5rem;
+  right: 0;
+  opacity: 0.7;
+  transform: rotate(180deg);
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.thin {
+  max-width: calc(0.5rem + 0.5rem + 2.5rem + 0.7rem + 0.7rem);
+  padding: 1.5rem 0.5rem;
+}
+
+.thin .arrowIcon {
+  transform: rotate(0);
+}

@@ -53,7 +53,11 @@ const router = createBrowserRouter([
           { path: "", element: <Navigate to={"all"} replace /> },
         ],
       },
-      { path: "settings", element: <Settings /> },
+      {
+        path: "settings",
+        element: <Navigate to={"general"} replace />,
+      },
+      { path: "settings/*", element: <Settings /> },
       { path: "", element: <Navigate to={"/chats/all"} replace /> },
     ],
   },

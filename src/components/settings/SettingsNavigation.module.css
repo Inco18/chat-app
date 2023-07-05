@@ -42,7 +42,3 @@
   color: var(--text);
   transition: color 0.3s;
 }
-
-.number {
-  font-size: 1.2rem;
-}

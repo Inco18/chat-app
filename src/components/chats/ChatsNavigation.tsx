@@ -5,28 +5,13 @@ import { ReactComponent as Chats } from "../../assets/chats-side.svg";
 import { ReactComponent as Archived } from "../../assets/archived.svg";
 import { ReactComponent as Blocked } from "../../assets/blocked.svg";
 import { ReactComponent as Trash } from "../../assets/trash.svg";
-import { ReactComponent as Arrow } from "../../assets/arrow.svg";
 
 import styles from "./ChatsNavigation.module.css";
-import useWindowSize from "../../hooks/useWindowSize";
+import SideNav from "../UI/SideNav";
 
 const ChatsNavigation = () => {
-  const [thinNav, setThinNav] = useState<boolean>(false);
-  const windowSize = useWindowSize();
-
-  useEffect(() => {
-    if (windowSize.width) {
-      if (windowSize?.width > 1400) setThinNav(false);
-      else setThinNav(true);
-    }
-  }, [windowSize]);
-
   return (
-    <nav className={`${styles.sideNav} ${thinNav ? styles.thin : ""}`}>
-      <Arrow
-        className={styles.arrowIcon}
-        onClick={() => setThinNav((prev) => !prev)}
-      />
+    <SideNav>
       <NavLink
         title="Favourites"
         to={"favourites"}
@@ -90,7 +75,7 @@ const ChatsNavigation = () => {
           Trash
         </div>
       </NavLink>
-    </nav>
+    </SideNav>
   );
 };
 
