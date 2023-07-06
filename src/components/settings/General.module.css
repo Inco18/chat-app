@@ -1,6 +1,6 @@
 .container {
   display: grid;
-  grid-template-columns: 8rem 15rem 6rem;
+  grid-template-columns: 13rem 19rem 6rem;
   grid-template-rows: 1.9rem 1.9rem 1.9rem auto auto;
   gap: 1rem 0;
 }
@@ -66,7 +66,7 @@
   align-items: center;
   justify-content: center;
   background-color: var(--accent-medium);
-  padding: 1rem;
+  padding: 2rem;
   border: 2px dashed var(--accent-main);
   border-radius: 1rem;
   cursor: pointer;
@@ -94,6 +94,8 @@
 
 .imgSettings {
   width: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
 .sliderLabel {
@@ -104,6 +106,7 @@
 .slider {
   width: 100%;
   margin-top: 0.2rem;
+  margin-bottom: 1.3rem;
 }
 
 .sliderThumb {
@@ -131,4 +134,52 @@
 
 .sliderTrack_1 {
   background-color: var(--dark);
+}
+
+.rotationContainer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  position: relative;
+}
+
+.rotationContainer input {
+  background-color: transparent;
+  border: 1px solid var(--accent-main);
+  border-radius: 0.6rem;
+  padding: 0 0 0 0.5rem;
+  transform: translateY(-3px);
+}
+
+.rotationContainer input:focus {
+  outline: 1px solid var(--accent-main-hover);
+}
+
+.rotationContainer span {
+  margin: 0;
+  position: absolute;
+  top: -8px;
+  right: -10px;
+}
+
+.buttonsContainer {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+}
+
+.saveButton {
+  background-color: var(--accent-main);
+  border: none;
+  border-radius: 100vw;
+  padding: 0.4rem 1.5rem;
+  transition: 0.1s;
+  margin: 0 auto;
+}
+.saveButton:hover {
+  background-color: var(--accent-main-hover);
+  cursor: pointer;
 }

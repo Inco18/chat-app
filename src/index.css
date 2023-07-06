@@ -91,6 +91,9 @@ body,
   --accent-main-light-hover: #837ee4;
 
   --text: #ffffff;
+
+  --toastify-color-dark: var(--accent-dark);
+  --toastify-font-family: "Montserrat";
 }
 
 #root {
@@ -119,4 +122,8 @@ body,
   --gpr-picker-border-color: var(--dark) !important;
   --gpr-category-border-color-hover: var(--accent-main);
   box-shadow: 0 0 20px -10px var(--dark);
+}
+
+.react-switch-bg {
+  outline: 2px solid var(--accent-main);
 }

@@ -1,17 +1,17 @@
 import React, { useEffect, useState } from "react";
 
 type themeContextType = {
-  theme: string;
+  theme: "dark" | "light";
   switchTheme: () => void;
 };
 
 export const ThemeContext = React.createContext<themeContextType>({
-  theme: "",
+  theme: "dark",
   switchTheme: () => {},
 });
 
 const ThemeContextProvider = (props: { children?: React.ReactNode }) => {
-  const [theme, setTheme] = useState("dark");
+  const [theme, setTheme] = useState<"dark" | "light">("dark");
 
   const setDark = () => {
     document.documentElement.style.setProperty("--background", "#20232b");
