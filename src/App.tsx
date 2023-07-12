@@ -19,6 +19,7 @@ import "react-toastify/dist/ReactToastify.css";
 
 import styles from "./App.module.css";
 import { useContext } from "react";
+import { SettingsNavContextProvider } from "./context/settingsNavContext";
 
 const router = createBrowserRouter([
   {
@@ -61,7 +62,14 @@ const router = createBrowserRouter([
         path: "settings",
         element: <Navigate to={"general"} replace />,
       },
-      { path: "settings/*", element: <Settings /> },
+      {
+        path: "settings/*",
+        element: (
+          <SettingsNavContextProvider>
+            <Settings />
+          </SettingsNavContextProvider>
+        ),
+      },
       { path: "", element: <Navigate to={"/chats/all"} replace /> },
     ],
   },

@@ -4,10 +4,12 @@ import { ReactComponent as Remove } from "../../assets/remove.svg";
 import Switch from "react-switch";
 
 import styles from "./Privacy.module.css";
+import Modal from "../modals/Modal";
 
 const Privacy = () => {
   const [passwordInput, setPasswordInput] = useState(false);
   const [switchState, setSwitchState] = useState(true);
+  const [deleteModal, setDeleteModal] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -66,6 +68,34 @@ const Privacy = () => {
         className={styles.switch}
         id="textSwitch"
       />
+      <h4 className={styles.fieldName}>Delete your account</h4>
+      <button
+        className={styles.changeButton}
+        onClick={() => setDeleteModal(true)}
+      >
+        Delete
+      </button>
+      <Modal
+        isOpen={deleteModal}
+        closeFunction={() => setDeleteModal(false)}
+        title={""}
+      >
+        <p className={styles.deleteModalText}>
+          Are you sure you want to delete your account? <br />
+          <span className={styles.deleteModalTextBold}>
+            This action is permanent!
+          </span>
+        </p>
+        <div className={styles.deleteModalButtonsContainer}>
+          <button
+            onClick={() => setDeleteModal(false)}
+            className={styles.cancelButton}
+          >
+            Cancel
+          </button>
+          <button className={styles.modalDeleteButton}>Delete</button>
+        </div>
+      </Modal>
     </div>
   );
 };

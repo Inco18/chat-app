@@ -1,7 +1,7 @@
 .container {
   display: grid;
   grid-template-columns: 13rem 19rem 6rem;
-  grid-template-rows: minmax(1.9rem, auto) 1.9rem 1.9rem auto auto;
+  grid-template-rows: minmax(1.9rem, auto) 1.9rem 1.9rem;
   gap: 1rem 0;
 }
 
@@ -21,6 +21,7 @@
   border-radius: 100vw;
   padding: 0.1rem 0.7rem;
   transition: 0.1s;
+  grid-column: 3/4;
 }
 .changeButton:hover {
   background-color: var(--accent-main-hover);
@@ -74,4 +75,44 @@
 .switch {
   width: fit-content;
   margin-left: auto;
+}
+
+.deleteModalText {
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.deleteModalTextBold {
+  font-weight: 600;
+}
+
+.deleteModalButtonsContainer {
+  display: flex;
+  justify-content: space-evenly;
+}
+
+.cancelButton {
+  background-color: var(--accent-main);
+  border: none;
+  border-radius: 100vw;
+  padding: 0.1rem 0.7rem;
+  transition: 0.1s;
+}
+
+.cancelButton:hover {
+  background-color: var(--accent-main-hover);
+  cursor: pointer;
+}
+
+.modalDeleteButton {
+  background-color: rgb(197, 0, 0);
+  border: none;
+  border-radius: 100vw;
+  padding: 0.1rem 0.7rem;
+  transition: 0.1s;
+}
+
+.modalDeleteButton:hover {
+  background-color: rgb(151, 0, 0);
+  cursor: pointer;
 }
