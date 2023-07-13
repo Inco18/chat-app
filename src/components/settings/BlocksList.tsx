@@ -14,6 +14,7 @@ const BlocksList = () => {
   const [privacyRefView, inViewPrivacy] = useInView();
 
   const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     if (inViewGeneral) {
@@ -22,6 +23,11 @@ const BlocksList = () => {
       navigate("privacy", { replace: true });
     }
   }, [inViewGeneral]);
+
+  useEffect(() => {
+    if (location.pathname.includes("privacy"))
+      (settingsRefs.privacyRef.current as HTMLDivElement).scrollIntoView();
+  }, []);
 
   return (
     <main className={styles.container}>

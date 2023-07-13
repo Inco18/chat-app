@@ -20,6 +20,10 @@ import "react-toastify/dist/ReactToastify.css";
 import styles from "./App.module.css";
 import { useContext } from "react";
 import { SettingsNavContextProvider } from "./context/settingsNavContext";
+import FormLayout from "./pages/FormLayout";
+import SignUp from "./pages/SignUp";
+import SignIn from "./pages/SignIn";
+import ForgotPassword from "./pages/ForgotPassword";
 
 const router = createBrowserRouter([
   {
@@ -71,6 +75,15 @@ const router = createBrowserRouter([
         ),
       },
       { path: "", element: <Navigate to={"/chats/all"} replace /> },
+    ],
+  },
+  {
+    path: "/",
+    element: <FormLayout />,
+    children: [
+      { path: "signup", element: <SignUp /> },
+      { path: "signin", element: <SignIn /> },
+      { path: "forgotPassword", element: <ForgotPassword /> },
     ],
   },
 ]);

@@ -1,0 +1,6 @@
+.header {
+  background-color: var(--background);
+  padding: 0 1rem;
+  display: flex;
+  height: 3rem;
+}

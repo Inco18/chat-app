@@ -1,15 +1,13 @@
 import React from "react";
-
-import styles from "./Header.module.css";
 import Logo from "./Logo";
 import MainNavigation from "./MainNavigation";
 import Notifications from "./Notifications";
 import Profile from "./Profile";
 import ThemeSwitch from "./ThemeSwitch";
 
-type Props = {};
+import styles from "./Header.module.css";
 
-const Header = (props: Props) => {
+const Header = () => {
   return (
     <header className={styles.header}>
       <div className={styles.leftBlock}>
