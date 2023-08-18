@@ -4,6 +4,7 @@ import defaultImg from "../../assets/default.png";
 import useOutsideClick from "../../hooks/useOutsideClick";
 
 import styles from "./Profile.module.css";
+import { useAppSelector } from "../../hooks/reduxHooks";
 
 const optionsClassnames = {
   enter: styles.enter,
@@ -17,6 +18,8 @@ const Profile = () => {
   const optionsRef = useRef<HTMLDivElement>(null);
   const nameImgRef = useRef<HTMLDivElement>(null);
 
+  const { firstName, lastName } = useAppSelector((state) => state.user);
+
   useOutsideClick([optionsRef, nameImgRef], () => setOptionsVisible(false));
 
   return (
@@ -26,7 +29,7 @@ const Profile = () => {
         ref={nameImgRef}
         onClick={() => setOptionsVisible((prev) => !prev)}
       >
-        <p>Jan Kowalski</p>
+        <p>{`${firstName} ${lastName}`}</p>
         <img src={defaultImg} className={styles.img} />
       </div>
       <CSSTransition
