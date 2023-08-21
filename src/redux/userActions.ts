@@ -1,12 +1,19 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import {
+  User,
+  browserLocalPersistence,
+  browserSessionPersistence,
   createUserWithEmailAndPassword,
-  onAuthStateChanged,
+  setPersistence,
+  signInWithEmailAndPassword,
+  signOut,
 } from "firebase/auth";
 import { auth, db } from "../services/firebase";
-import { Timestamp, doc, getDoc, setDoc } from "firebase/firestore";
+import { Timestamp, doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
 import { IFormInput } from "../components/form/SignUpForm";
 import { initialState, userStateType } from "./userSlice";
+import { signInForm } from "../components/form/SignInForm";
+import { loadUserFromDb } from "../services/auth";
 
 export const signUp = createAsyncThunk(
   "user/signUp",
@@ -29,35 +36,84 @@ export const signUp = createAsyncThunk(
       notifications: [],
       birthDate: Timestamp.fromDate(birthDate),
       avatarUrl: null,
+      allowText: true,
     });
     return {
       firstName: userData.firstName,
       lastName: userData.lastName,
       sex: userData.sex,
       birthDate: birthDate.toDateString(),
+      email: user.email ? user.email : "",
     };
   }
 );
 
+export const signIn = createAsyncThunk(
+  "user/signIn",
+  async (userData: signInForm) => {
+    await setPersistence(
+      auth,
+      userData.rememberMe ? browserLocalPersistence : browserSessionPersistence
+    );
+    const userCredential = await signInWithEmailAndPassword(
+      auth,
+      userData.email,
+      userData.password
+    );
+    const user = userCredential.user;
+    const userFromDb = await loadUserFromDb(user.uid);
+    return {
+      ...userFromDb,
+      email: user.email ? user.email : "",
+    };
+  }
+);
+
+export const logout = createAsyncThunk("user/logout", async () => {
+  await signOut(auth);
+});
+
 export const loadUser = createAsyncThunk(
   "user/loadUser",
-  async (userId: string) => {
-    const docRef = doc(db, "users", userId);
-    const docSnap = await getDoc(docRef);
+  async (user: User) => {
+    const userFromDb = await loadUserFromDb(user.uid);
+    return {
+      ...userFromDb,
+      email: user.email ? user.email : "",
+    };
+  }
+);
 
-    if (docSnap.exists()) {
-      const data = docSnap.data();
-      return {
-        firstName: data.firstName,
-        lastName: data.lastName,
-        sex: data.sex,
-        avatarUrl: data.avatarUrl,
-        notifications: data.notifications,
-        birthDate: new Date(data.birthDate.seconds * 1000).toDateString(),
-      };
-    } else {
-      throw new Error("User informations not found");
-    }
+export const changeFirstName = createAsyncThunk(
+  "user/changeFirstName",
+  async (firstName: string) => {
+    const uid = auth.currentUser?.uid;
+    if (!uid) throw new Error("Could not get user's id");
+    const docRef = doc(db, "users", uid);
+    await updateDoc(docRef, { firstName: firstName });
+    return { firstName };
+  }
+);
+
+export const changeLastName = createAsyncThunk(
+  "user/changeLastName",
+  async (lastName: string) => {
+    const uid = auth.currentUser?.uid;
+    if (!uid) throw new Error("Could not get user's id");
+    const docRef = doc(db, "users", uid);
+    await updateDoc(docRef, { lastName: lastName });
+    return { lastName };
+  }
+);
+
+export const changeAllowText = createAsyncThunk(
+  "/user/changeAllowText",
+  async (allowText: boolean) => {
+    const uid = auth.currentUser?.uid;
+    if (!uid) throw new Error("Could not get user's id");
+    const docRef = doc(db, "users", uid);
+    await updateDoc(docRef, { allowText: allowText });
+    return { allowText };
   }
 );
 

@@ -1,9 +1,10 @@
-import styles from "./Form.module.css";
 import { Link, useNavigate } from "react-router-dom";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { useAppDispatch, useAppSelector } from "../../hooks/reduxHooks";
 import { signUp } from "../../redux/userActions";
 import { useEffect } from "react";
+
+import styles from "./Form.module.css";
 
 export type IFormInput = {
   firstName: string;

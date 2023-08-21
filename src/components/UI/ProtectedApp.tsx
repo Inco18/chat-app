@@ -15,8 +15,8 @@ const ProtectedApp = (props: { children?: React.ReactNode }) => {
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, (user) => {
       if (user) {
-        if (status !== "afterSignUp") {
-          dispatch(loadUser(user.uid));
+        if (status !== "afterSignUp" && status !== "afterSignIn") {
+          dispatch(loadUser(user));
         }
       } else {
         dispatch(clearUser());
@@ -27,7 +27,8 @@ const ProtectedApp = (props: { children?: React.ReactNode }) => {
   }, []);
 
   useEffect(() => {
-    if (status === "idle" && !firstName) navigate("/signin");
+    if ((status === "idle" && !firstName) || status === "errorLoading")
+      navigate("/signin");
   }, [status, firstName]);
 
   if (status === "loadingUser") return <Spinner />;

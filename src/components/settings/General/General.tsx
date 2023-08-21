@@ -2,14 +2,14 @@ import React, { useRef, useState } from "react";
 import AvatarEditor from "react-avatar-editor";
 import ReactSlider from "react-slider";
 import { toast } from "react-toastify";
-import { ReactComponent as Check } from "../../assets/check.svg";
-import { ReactComponent as Remove } from "../../assets/remove.svg";
-import { ReactComponent as AddImg } from "../../assets/addImage.svg";
+import { ReactComponent as AddImg } from "../../../assets/addImage.svg";
 
 import styles from "./General.module.css";
+import FirstName from "./FirstName";
+import LastName from "./LastName";
+import Email from "./Email";
 
 const General = () => {
-  const [inputOnField, setInputOnField] = useState<number>();
   const [image, setImage] = useState<File>();
   const [imgScale, setImgScale] = useState<number>(1);
   const [imgRotation, setImgRotation] = useState<number>(0);
@@ -36,98 +36,12 @@ const General = () => {
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log(
-      (
-        (e.target as HTMLElement).closest(`.${styles.form}`)
-          ?.children[0] as HTMLInputElement
-      ).value
-    );
-    setInputOnField(undefined);
-  };
-
   return (
     <div className={styles.container}>
-      <h4 className={styles.fieldName}>First name</h4>
-      {inputOnField != 0 ? (
-        <>
-          <p className={styles.fieldValue}>Jan</p>
-          <button
-            className={styles.changeButton}
-            onClick={() => setInputOnField(0)}
-          >
-            Change
-          </button>
-        </>
-      ) : (
-        <form className={styles.form} onSubmit={handleSubmit}>
-          <input
-            type="text"
-            placeholder={"Jan"}
-            className={styles.input}
-            autoFocus
-          />
-          <Check className={`${styles.checkImg}`} onClick={handleSubmit} />
-          <Remove
-            className={`${styles.checkImg}`}
-            onClick={() => setInputOnField(undefined)}
-          />
-        </form>
-      )}
+      <FirstName />
+      <LastName />
+      <Email />
 
-      <h4 className={styles.fieldName}>Last name</h4>
-      {inputOnField != 1 ? (
-        <>
-          <p className={styles.fieldValue}>Kowalski</p>
-          <button
-            className={styles.changeButton}
-            onClick={() => setInputOnField(1)}
-          >
-            Change
-          </button>
-        </>
-      ) : (
-        <form className={styles.form} onSubmit={handleSubmit}>
-          <input
-            type="text"
-            placeholder={"Kowalski"}
-            className={styles.input}
-            autoFocus
-          />
-          <Check className={`${styles.checkImg}`} onClick={handleSubmit} />
-          <Remove
-            className={`${styles.checkImg}`}
-            onClick={() => setInputOnField(undefined)}
-          />
-        </form>
-      )}
-      <h4 className={styles.fieldName}>E-mail</h4>
-      {inputOnField != 2 ? (
-        <>
-          <p className={styles.fieldValue}>j.kowalski@gmail.com</p>
-          <button
-            className={styles.changeButton}
-            onClick={() => setInputOnField(2)}
-          >
-            Change
-          </button>
-        </>
-      ) : (
-        <form className={styles.form} onSubmit={handleSubmit}>
-          <input
-            type="text"
-            placeholder={"j.kowalski@gmail.com"}
-            className={styles.input}
-            autoFocus
-          />
-          <Check className={`${styles.checkImg}`} onClick={handleSubmit} />
-          <Remove
-            className={`${styles.checkImg}`}
-            onClick={() => setInputOnField(undefined)}
-          />
-        </form>
-      )}
       <h4 className={styles.fieldName}>Profile image</h4>
       {!image ? (
         <div

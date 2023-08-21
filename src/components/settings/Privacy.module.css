@@ -7,6 +7,7 @@
 
 .fieldName {
   font-weight: 500;
+  position: relative;
 }
 .longFieldName {
   grid-column: 1/3;
@@ -75,6 +76,11 @@
 .switch {
   width: fit-content;
   margin-left: auto;
+}
+
+.absoluteSpinner {
+  position: absolute;
+  right: -1rem;
 }
 
 .deleteModalText {
