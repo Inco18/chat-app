@@ -16,14 +16,24 @@ const MainNavigation = (props: Props) => {
     useState<boolean>(false);
 
   useEffect(() => {
-    document.body.onload = () => {
+    if (document.readyState === "complete") {
       if (chatsRef.current && settingsRef.current) {
         setLinksWidths([
           chatsRef.current.clientWidth,
           settingsRef.current.clientWidth,
         ]);
       }
-    };
+    } else {
+      document.body.onload = () => {
+        console.log(1);
+        if (chatsRef.current && settingsRef.current) {
+          setLinksWidths([
+            chatsRef.current.clientWidth,
+            settingsRef.current.clientWidth,
+          ]);
+        }
+      };
+    }
   }, []);
 
   useEffect(() => {

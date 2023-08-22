@@ -29,6 +29,14 @@
   cursor: pointer;
 }
 
+.smallSpinner {
+  width: 1rem;
+  height: 1rem;
+  color: var(--text);
+  opacity: 0.7;
+  margin-left: 0.4rem;
+}
+
 .form {
   width: 100%;
   display: flex;
@@ -42,6 +50,7 @@
 .formFirstLine {
   display: flex;
   align-items: center;
+  width: 100%;
 }
 
 .input {
@@ -51,11 +60,22 @@
   border-radius: 0.5rem;
   background-color: transparent;
   height: 100%;
+  width: 80%;
 }
 
 .input::placeholder {
   color: var(--text);
   opacity: 0.5;
+}
+
+.inputError {
+  border-color: rgb(206, 2, 2);
+}
+
+.errorMsg {
+  color: rgb(206, 2, 2);
+  font-size: 0.9rem;
+  margin-top: -0.3rem;
 }
 
 .checkImg {
@@ -81,44 +101,4 @@
 .absoluteSpinner {
   position: absolute;
   right: -1rem;
-}
-
-.deleteModalText {
-  text-align: center;
-  margin-bottom: 1rem;
-}
-
-.deleteModalTextBold {
-  font-weight: 600;
-}
-
-.deleteModalButtonsContainer {
-  display: flex;
-  justify-content: space-evenly;
-}
-
-.cancelButton {
-  background-color: var(--accent-main);
-  border: none;
-  border-radius: 100vw;
-  padding: 0.1rem 0.7rem;
-  transition: 0.1s;
-}
-
-.cancelButton:hover {
-  background-color: var(--accent-main-hover);
-  cursor: pointer;
-}
-
-.modalDeleteButton {
-  background-color: rgb(197, 0, 0);
-  border: none;
-  border-radius: 100vw;
-  padding: 0.1rem 0.7rem;
-  transition: 0.1s;
-}
-
-.modalDeleteButton:hover {
-  background-color: rgb(151, 0, 0);
-  cursor: pointer;
 }

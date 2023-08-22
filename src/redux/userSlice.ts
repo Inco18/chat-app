@@ -9,6 +9,11 @@ import {
   changeFirstName,
   changeLastName,
   changeAllowText,
+  changeEmail,
+  changePassword,
+  deleteAccount,
+  uploadProfileImg,
+  deleteProfileImg,
 } from "./userActions";
 
 export type userStateType = {
@@ -132,6 +137,53 @@ const userSlice = createSlice({
         state.status = "idle";
         toast.error("Could not change last name: " + action.error.message);
       })
+      .addCase(changeEmail.pending, (state) => {
+        state.status = "changingEmail";
+      })
+      .addCase(changeEmail.fulfilled, (state, action) => {
+        state.status = "idle";
+        state.email = action.payload;
+        toast.success("Email changed successfully");
+      })
+      .addCase(changeEmail.rejected, (state, action) => {
+        state.status = "idle";
+        toast.error("Could not change email: " + action.error.message);
+      })
+      .addCase(uploadProfileImg.pending, (state) => {
+        state.status = "uploadingProfileImg";
+      })
+      .addCase(uploadProfileImg.fulfilled, (state, action) => {
+        state.status = "idle";
+        state.avatarUrl = action.payload;
+        toast.success("Profile image uploaded successfully");
+      })
+      .addCase(uploadProfileImg.rejected, (state, action) => {
+        state.status = "idle";
+        toast.error("Could not upload profile image: " + action.error.message);
+      })
+      .addCase(deleteProfileImg.pending, (state) => {
+        state.status = "deletingProfileImg";
+      })
+      .addCase(deleteProfileImg.fulfilled, (state) => {
+        state.status = "idle";
+        state.avatarUrl = null;
+        toast.success("Profile image deleted successfully");
+      })
+      .addCase(deleteProfileImg.rejected, (state, action) => {
+        state.status = "idle";
+        toast.error("Could not delete profile image: " + action.error.message);
+      })
+      .addCase(changePassword.pending, (state) => {
+        state.status = "changingPassword";
+      })
+      .addCase(changePassword.fulfilled, (state) => {
+        state.status = "idle";
+        toast.success("Password changed successfully");
+      })
+      .addCase(changePassword.rejected, (state, action) => {
+        state.status = "idle";
+        toast.error("Could not change password: " + action.error.message);
+      })
       .addCase(changeAllowText.pending, (state) => {
         state.status = "changingAllowText";
       })
@@ -147,6 +199,17 @@ const userSlice = createSlice({
       .addCase(changeAllowText.rejected, (state, action) => {
         state.status = "idle";
         toast.error("Could not change value: " + action.error.message);
+      })
+      .addCase(deleteAccount.pending, (state) => {
+        state.status = "deletingAccount";
+      })
+      .addCase(deleteAccount.fulfilled, (state) => {
+        state.status = "idle";
+        toast.success("Account has been deleted");
+      })
+      .addCase(deleteAccount.rejected, (state, action) => {
+        state.status = "idle";
+        toast.error("Could not delete account: " + action.error.message);
       }),
 });
 

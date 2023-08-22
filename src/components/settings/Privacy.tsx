@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { ReactComponent as Check } from "../../assets/check.svg";
 import { ReactComponent as Remove } from "../../assets/remove.svg";
 import { ReactComponent as SmallSpinner } from "../../assets/spinner.svg";
@@ -6,21 +6,50 @@ import Switch from "react-switch";
 
 import Modal from "../modals/Modal";
 import { useAppDispatch, useAppSelector } from "../../hooks/reduxHooks";
-import { changeAllowText } from "../../redux/userActions";
+import {
+  changeAllowText,
+  changeEmail,
+  changePassword,
+} from "../../redux/userActions";
 import styles from "./Privacy.module.css";
+import { SubmitHandler, useForm } from "react-hook-form";
+import useOutsideClick from "../../hooks/useOutsideClick";
+import DeleteAccountModal from "../modals/DeleteAccountModal";
 
 const Privacy = () => {
   const [passwordInput, setPasswordInput] = useState(false);
   const [deleteModal, setDeleteModal] = useState(false);
   const { status, allowText } = useAppSelector((state) => state.user);
   const isChangingAllowText = status === "changingAllowText";
+  const isChangingPassword = status === "changingPassword";
   const dispatch = useAppDispatch();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    reset,
+  } = useForm<{ oldPassword: string; newPassword: string }>({
+    defaultValues: { oldPassword: "", newPassword: "" },
+  });
+  const formRef = useRef(null);
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log(e);
+  const close = () => {
+    reset();
     setPasswordInput(false);
   };
+  useOutsideClick([formRef], close);
+
+  const onSubmit: SubmitHandler<{
+    oldPassword: string;
+    newPassword: string;
+  }> = (data) => {
+    if (!data.oldPassword || !data.newPassword) close();
+    else dispatch(changePassword(data));
+  };
+
+  useEffect(() => {
+    if (status === "idle") close();
+  }, [status]);
 
   return (
     <div className={styles.container}>
@@ -36,27 +65,51 @@ const Privacy = () => {
           </button>
         </>
       ) : (
-        <form className={styles.form} onSubmit={handleSubmit}>
+        <form
+          className={styles.form}
+          onSubmit={handleSubmit(onSubmit)}
+          ref={formRef}
+        >
           <div className={styles.formFirstLine}>
             <input
               type="password"
               className={styles.input}
               autoFocus
               placeholder="Old password"
+              {...register("oldPassword")}
             />
-            <Remove
-              className={`${styles.checkImg}`}
-              onClick={() => setPasswordInput(false)}
-            />
+            {!isChangingPassword && (
+              <Remove className={`${styles.checkImg}`} onClick={close} />
+            )}
           </div>
           <div className={styles.formSecondLine}>
             <input
               type="password"
-              className={styles.input}
+              className={`${styles.input} ${
+                errors.newPassword ? styles.inputError : ""
+              }`}
               placeholder="New password"
+              {...register("newPassword", {
+                minLength: {
+                  value: 8,
+                  message: "Password must be at least 8 characters long",
+                },
+              })}
             />
-            <Check className={`${styles.checkImg}`} onClick={handleSubmit} />
+            {isChangingPassword ? (
+              <SmallSpinner className={`${styles.smallSpinner}`} />
+            ) : (
+              <Check
+                className={`${styles.checkImg}`}
+                onClick={handleSubmit(onSubmit)}
+              />
+            )}
           </div>
+          {errors.newPassword && (
+            <span className={styles.errorMsg}>
+              {errors.newPassword.message}
+            </span>
+          )}
           <button type="submit" hidden></button>
         </form>
       )}
@@ -89,21 +142,7 @@ const Privacy = () => {
         closeFunction={() => setDeleteModal(false)}
         title={""}
       >
-        <p className={styles.deleteModalText}>
-          Are you sure you want to delete your account? <br />
-          <span className={styles.deleteModalTextBold}>
-            This action is permanent!
-          </span>
-        </p>
-        <div className={styles.deleteModalButtonsContainer}>
-          <button
-            onClick={() => setDeleteModal(false)}
-            className={styles.cancelButton}
-          >
-            Cancel
-          </button>
-          <button className={styles.modalDeleteButton}>Delete</button>
-        </div>
+        <DeleteAccountModal closeFn={() => setDeleteModal(false)} />
       </Modal>
     </div>
   );

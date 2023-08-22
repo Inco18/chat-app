@@ -4,16 +4,32 @@ import {
   browserLocalPersistence,
   browserSessionPersistence,
   createUserWithEmailAndPassword,
+  deleteUser,
   setPersistence,
   signInWithEmailAndPassword,
   signOut,
+  updateEmail,
+  updatePassword,
 } from "firebase/auth";
-import { auth, db } from "../services/firebase";
-import { Timestamp, doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
+import { auth, db, storage } from "../services/firebase";
+import {
+  Timestamp,
+  deleteDoc,
+  doc,
+  getDoc,
+  setDoc,
+  updateDoc,
+} from "firebase/firestore";
 import { IFormInput } from "../components/form/SignUpForm";
 import { initialState, userStateType } from "./userSlice";
 import { signInForm } from "../components/form/SignInForm";
-import { loadUserFromDb } from "../services/auth";
+import { loadUserFromDb, reauthenticate } from "../services/auth";
+import {
+  deleteObject,
+  getDownloadURL,
+  ref,
+  uploadBytes,
+} from "firebase/storage";
 
 export const signUp = createAsyncThunk(
   "user/signUp",
@@ -106,14 +122,74 @@ export const changeLastName = createAsyncThunk(
   }
 );
 
+export const changeEmail = createAsyncThunk(
+  "user/changeEmail",
+  async (data: { password: string; newEmail: string }) => {
+    const user = auth.currentUser;
+    if (!user) throw new Error("Could not get user");
+    await reauthenticate(data.password);
+    await updateEmail(user, data.newEmail);
+    return data.newEmail;
+  }
+);
+
+export const changePassword = createAsyncThunk(
+  "user/changePassword",
+  async (data: { oldPassword: string; newPassword: string }) => {
+    const user = auth.currentUser;
+    if (!user) throw new Error("Could not get user");
+    await reauthenticate(data.oldPassword);
+    await updatePassword(user, data.newPassword);
+  }
+);
+
 export const changeAllowText = createAsyncThunk(
-  "/user/changeAllowText",
+  "user/changeAllowText",
   async (allowText: boolean) => {
     const uid = auth.currentUser?.uid;
     if (!uid) throw new Error("Could not get user's id");
     const docRef = doc(db, "users", uid);
     await updateDoc(docRef, { allowText: allowText });
     return { allowText };
+  }
+);
+
+export const deleteAccount = createAsyncThunk(
+  "user/deleteAccount",
+  async (password: string) => {
+    const user = auth.currentUser;
+    if (!user) throw new Error("Could not get user");
+    await reauthenticate(password);
+    await deleteDoc(doc(db, "users", user.uid));
+    await deleteUser(user);
+  }
+);
+
+export const uploadProfileImg = createAsyncThunk(
+  "user/uploadProfileImg",
+  async (blob: Blob) => {
+    const uid = auth.currentUser?.uid;
+    if (!uid) throw new Error("Could not get user's id");
+    const storageRef = ref(storage, `avatars/${uid}`);
+    await uploadBytes(storageRef, blob);
+    const url = await getDownloadURL(storageRef);
+    await updateDoc(doc(db, "users", uid), {
+      avatarUrl: url,
+    });
+    return url;
+  }
+);
+
+export const deleteProfileImg = createAsyncThunk(
+  "user/deleteProfileImg",
+  async () => {
+    const uid = auth.currentUser?.uid;
+    if (!uid) throw new Error("Could not get user's id");
+    const storageRef = ref(storage, `avatars/${uid}`);
+    await deleteObject(storageRef);
+    await updateDoc(doc(db, "users", uid), {
+      avatarUrl: null,
+    });
   }
 );
 

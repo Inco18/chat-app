@@ -1,4 +1,9 @@
-import { createUserWithEmailAndPassword, signOut } from "firebase/auth";
+import {
+  EmailAuthProvider,
+  createUserWithEmailAndPassword,
+  reauthenticateWithCredential,
+  signOut,
+} from "firebase/auth";
 import { auth, db } from "./firebase";
 import { toast } from "react-toastify";
 import { IFormInput } from "../components/form/SignUpForm";
@@ -10,6 +15,7 @@ export const loadUserFromDb = async (userId: string) => {
 
   if (docSnap.exists()) {
     const data = docSnap.data();
+
     return {
       firstName: data.firstName,
       lastName: data.lastName,
@@ -23,4 +29,11 @@ export const loadUserFromDb = async (userId: string) => {
     await signOut(auth);
     throw new Error("User informations not found");
   }
+};
+
+export const reauthenticate = async (password: string) => {
+  const user = auth.currentUser;
+  if (!user || !user.email) throw new Error("Could not get user");
+  const credential = EmailAuthProvider.credential(user.email, password);
+  await reauthenticateWithCredential(user, credential);
 };
