@@ -3,13 +3,23 @@ import { NavLink, useNavigate } from "react-router-dom";
 import useWindowSize from "../../hooks/useWindowSize";
 import { ReactComponent as Magnifier } from "../../assets/magnifier.svg";
 import { ReactComponent as Arrow } from "../../assets/arrow.svg";
-import defaultImg from "../../assets/default.png";
 
 import styles from "./ChatsList.module.css";
+import InfiniteScroll from "react-infinite-scroll-component";
+import {
+  collection,
+  doc,
+  getDoc,
+  onSnapshot,
+  query,
+  where,
+} from "firebase/firestore";
+import { auth, db } from "../../services/firebase";
 
 const ChatsList = (props: { type: String }) => {
   const [search, setSearch] = useState<string>("");
   const [thinList, setThinList] = useState<boolean>(false);
+  const [list, setList] = useState<any[]>([]);
   const windowSize = useWindowSize();
   const inputRef = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
@@ -21,8 +31,44 @@ const ChatsList = (props: { type: String }) => {
     }
   }, [windowSize]);
 
+  const q = query(
+    collection(db, "chats"),
+    where("users", "array-contains", auth.currentUser?.uid)
+  );
+
   useEffect(() => {
-    navigate("1");
+    const unsub = onSnapshot(q, (querySnapshot) => {
+      console.log(querySnapshot.docChanges());
+      Promise.all(
+        querySnapshot.docs.map(async (chatDocSnap: any) => {
+          const chatData = chatDocSnap.data();
+
+          const otherUserId = chatData.users.filter(
+            (id: string) => id !== auth.currentUser?.uid
+          )[0];
+          const userDocRef = doc(db, "users", otherUserId);
+          const userDocSnap = await getDoc(userDocRef);
+          console.log("reqUser");
+
+          return {
+            id: chatDocSnap.id,
+            userInfo: {
+              id: otherUserId,
+              img: userDocSnap.data()?.avatarUrl,
+              firstName: userDocSnap.data()?.firstName,
+              lastName: userDocSnap.data()?.lastName,
+              sex: userDocSnap.data()?.sex,
+            },
+            ...chatData,
+          };
+        })
+      ).then((chatsArr) => {
+        setList(chatsArr);
+      });
+      console.log("reqSnap");
+    });
+
+    return () => unsub();
   }, []);
 
   return (
@@ -52,100 +98,45 @@ const ChatsList = (props: { type: String }) => {
           ref={inputRef}
         />
       </div>
-      <div className={styles.chatsOuter}>
+      <div className={styles.chatsOuter} id="scrollableDiv">
         <div className={styles.chatsInner}>
-          <NavLink
-            to={"1"}
-            className={({ isActive }) =>
-              (isActive ? styles["active"] : "") + " " + styles["navlink"]
-            }
-            title="John Paul"
+          <InfiniteScroll
+            next={() => {}}
+            hasMore={true}
+            loader={<span>Loading</span>}
+            dataLength={1}
+            scrollableTarget="scrollableDiv"
           >
-            <img src={defaultImg} className={styles.profileImg} />
-            <div className={styles.profileRightContainer}>
-              <p className={styles.name}>John Paul</p>
-              <p className={styles.lastMsg}>John sent an image</p>
-            </div>
-          </NavLink>
-          <NavLink
-            to={"2"}
-            className={({ isActive }) =>
-              (isActive ? styles["active"] : "") + " " + styles["navlink"]
-            }
-            title="Christian Ball"
-          >
-            <img src={defaultImg} className={styles.profileImg} />
-            <div className={styles.profileRightContainer}>
-              <p className={styles.name}>Christian Ball</p>
-              <p className={styles.lastMsg}>
-                You: Some text 43213 21311 dsadas dsa das
-              </p>
-            </div>
-          </NavLink>
-          <NavLink
-            to={"3"}
-            className={({ isActive }) =>
-              (isActive ? styles["active"] : "") + " " + styles["navlink"]
-            }
-            title="Haleema Peters"
-          >
-            <img src={defaultImg} className={styles.profileImg} />
-            <div className={styles.profileRightContainer}>
-              <p className={styles.name + " " + styles.unread}>
-                Haleema Peters
-              </p>
-              <p className={styles.lastMsg}>Haleema: Some text</p>
-            </div>
-            <div className={styles.dot} />
-          </NavLink>
-          <NavLink
-            to={"3"}
-            className={({ isActive }) =>
-              (isActive ? styles["active"] : "") + " " + styles["navlink"]
-            }
-            title="Haleema Peters"
-          >
-            <img src={defaultImg} className={styles.profileImg} />
-            <div className={styles.profileRightContainer}>
-              <p className={styles.name + " " + styles.unread}>
-                Haleema Peters
-              </p>
-              <p className={styles.lastMsg}>Haleema: Some text</p>
-            </div>
-            <div className={styles.dot} />
-          </NavLink>
-          <NavLink
-            to={"3"}
-            className={({ isActive }) =>
-              (isActive ? styles["active"] : "") + " " + styles["navlink"]
-            }
-            title="Haleema Peters"
-          >
-            <img src={defaultImg} className={styles.profileImg} />
-            <div className={styles.profileRightContainer}>
-              <p className={styles.name + " " + styles.unread}>
-                Haleema Peters
-              </p>
-              <p className={styles.lastMsg}>Haleema: Some text</p>
-            </div>
-            <div className={styles.dot} />
-          </NavLink>
-          <NavLink
-            to={"3"}
-            className={({ isActive }) =>
-              (isActive ? styles["active"] : "") + " " + styles["navlink"]
-            }
-            title="Haleema Peters"
-          >
-            <img src={defaultImg} className={styles.profileImg} />
-            <div className={styles.profileRightContainer}>
-              <p className={styles.name + " " + styles.unread}>
-                Haleema Peters
-              </p>
-              <p className={styles.lastMsg}>Haleema: Some text</p>
-            </div>
-            <div className={styles.dot} />
-          </NavLink>
+            {list.map((chat) => {
+              return (
+                <NavLink
+                  to={chat.id}
+                  className={({ isActive }) =>
+                    (isActive ? styles["active"] : "") + " " + styles["navlink"]
+                  }
+                  title={`${chat.userInfo.firstName} ${chat.userInfo.lastName}`}
+                  key={chat.id}
+                >
+                  <img
+                    src={
+                      chat.userInfo.img
+                        ? chat.userInfo.img
+                        : chat.userInfo.sex === "female"
+                        ? "/defaultFemale.webp"
+                        : "/defaultMale.webp"
+                    }
+                    className={styles.profileImg}
+                  />
+                  <div className={styles.profileRightContainer}>
+                    <p
+                      className={styles.name}
+                    >{`${chat.userInfo.firstName} ${chat.userInfo.lastName}`}</p>
+                    <p className={styles.lastMsg}>{chat.lastMsg.value}</p>
+                  </div>
+                </NavLink>
+              );
+            })}
+          </InfiniteScroll>
         </div>
       </div>
     </div>
