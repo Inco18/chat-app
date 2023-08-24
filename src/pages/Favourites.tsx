@@ -5,7 +5,7 @@ import ChatsList from "../components/chats/ChatsList";
 const AllChats = () => {
   return (
     <>
-      <ChatsList type={"favourites"} />
+      <ChatsList />
       <Outlet />
     </>
   );

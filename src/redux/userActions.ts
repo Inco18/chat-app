@@ -30,6 +30,7 @@ import {
   ref,
   uploadBytes,
 } from "firebase/storage";
+import { RootState } from "./store";
 
 export const signUp = createAsyncThunk(
   "user/signUp",
@@ -47,8 +48,8 @@ export const signUp = createAsyncThunk(
     await setDoc(doc(db, "users", user.uid), {
       firstName: userData.firstName,
       lastName: userData.lastName,
+      fullName: `${userData.firstName.toLowerCase()} ${userData.lastName.toLowerCase()}`,
       sex: userData.sex,
-      userChats: [],
       notifications: [],
       birthDate: Timestamp.fromDate(birthDate),
       avatarUrl: null,
@@ -100,27 +101,38 @@ export const loadUser = createAsyncThunk(
   }
 );
 
-export const changeFirstName = createAsyncThunk(
-  "user/changeFirstName",
-  async (firstName: string) => {
-    const uid = auth.currentUser?.uid;
-    if (!uid) throw new Error("Could not get user's id");
-    const docRef = doc(db, "users", uid);
-    await updateDoc(docRef, { firstName: firstName });
-    return { firstName };
-  }
-);
+export const changeFirstName = createAsyncThunk<
+  { firstName: string },
+  string,
+  { state: { user: userStateType } }
+>("user/changeFirstName", async (firstName: string, thunkApi) => {
+  const uid = auth.currentUser?.uid;
+  if (!uid) throw new Error("Could not get user's id");
+  const docRef = doc(db, "users", uid);
+  const state = thunkApi.getState();
+  await updateDoc(docRef, {
+    firstName: firstName,
+    fullName: `${firstName.toLowerCase()} ${state.user.lastName.toLowerCase()}`,
+  });
+  return { firstName };
+});
 
-export const changeLastName = createAsyncThunk(
-  "user/changeLastName",
-  async (lastName: string) => {
-    const uid = auth.currentUser?.uid;
-    if (!uid) throw new Error("Could not get user's id");
-    const docRef = doc(db, "users", uid);
-    await updateDoc(docRef, { lastName: lastName });
-    return { lastName };
-  }
-);
+export const changeLastName = createAsyncThunk<
+  { lastName: string },
+  string,
+  { state: { user: userStateType } }
+>("user/changeLastName", async (lastName: string, thunkApi) => {
+  const uid = auth.currentUser?.uid;
+  if (!uid) throw new Error("Could not get user's id");
+  const docRef = doc(db, "users", uid);
+  const state = thunkApi.getState();
+  console.log(state);
+  await updateDoc(docRef, {
+    lastName: lastName,
+    fullName: `${state.user.firstName.toLowerCase()} ${lastName.toLowerCase()}`,
+  });
+  return { lastName };
+});
 
 export const changeEmail = createAsyncThunk(
   "user/changeEmail",
@@ -160,6 +172,8 @@ export const deleteAccount = createAsyncThunk(
     const user = auth.currentUser;
     if (!user) throw new Error("Could not get user");
     await reauthenticate(password);
+    const storageRef = ref(storage, `avatars/${user.uid}`);
+    await deleteObject(storageRef);
     await deleteDoc(doc(db, "users", user.uid));
     await deleteUser(user);
   }

@@ -39,9 +39,8 @@
   column-gap: 1rem;
   border-radius: 1.2rem;
   padding: 0.9rem;
-  margin-bottom: 2rem;
+  margin-bottom: 0.5rem;
   overflow: hidden;
-  flex-shrink: 0;
 }
 
 .searchInput {
@@ -91,6 +90,68 @@
   padding-right: 1rem;
 }
 
+.listTitle {
+  opacity: 0.7;
+  font-weight: 300;
+  border-bottom: 1px solid var(--text);
+  text-align: center;
+  margin-bottom: 0.3rem;
+}
+
+.groupButton {
+  width: calc(100% - 1rem);
+  padding: 0.3rem 0;
+  display: grid;
+  grid-template-columns: auto auto;
+  place-items: center;
+  border-radius: 0.7rem;
+  border: 0;
+  background-color: var(--accent-dark);
+  cursor: pointer;
+  margin-bottom: 0.5rem;
+  transition: 0.1s;
+  overflow: hidden;
+  max-height: max-content;
+}
+
+.groupButton * {
+  transition: opacity 0.1s, transform 0.3s, margin 0.3s;
+  opacity: 0.7;
+  max-height: 100%;
+  overflow: visible;
+}
+
+.groupButton:hover {
+  background-color: var(--accent-vlight);
+}
+
+.groupButton:hover * {
+  opacity: 1;
+}
+
+.groupButton p {
+  width: max-content;
+  max-height: 100%;
+  overflow: hidden;
+  margin: 0 0.5rem;
+}
+
+.thin .groupButton p {
+  margin: 0 0.5rem;
+}
+
+.groupButtonIcon {
+  width: 1.5rem;
+  height: 1.5rem;
+  color: var(--text);
+  cursor: pointer;
+  margin: 0 0 0 0.5rem;
+}
+
+.thin .groupButtonIcon {
+  margin: 0 1.5rem;
+}
+
 .navlink {
   display: flex;
   flex-direction: row;
@@ -105,6 +166,7 @@
   height: min-content;
   transition: background-color 0.2s;
   position: relative;
+  cursor: pointer;
 }
 
 .navlink.active {
@@ -118,6 +180,7 @@
 
 .profileImg {
   height: 3rem;
+  width: 3rem;
   border-radius: 100vw;
 }
 
@@ -126,6 +189,19 @@
   flex-direction: column;
   justify-content: end;
   overflow: hidden;
+}
+
+.profileRightContainerNoMsg {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.smallSpinner {
+  display: flex;
+  justify-content: center;
+  opacity: 0.7;
 }
 
 .name {
@@ -154,7 +230,7 @@
   width: 10px;
   height: 10px;
   border-radius: 100vw;
-  top: 50%;
+  top: calc(50% - 5px);
   right: 5px;
   transition: 0.3s;
 }

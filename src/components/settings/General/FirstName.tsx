@@ -29,7 +29,7 @@ const FirstName = () => {
   useOutsideClick([formRef], close);
 
   const onSubmit: SubmitHandler<{ firstName: string }> = (data) => {
-    if (!data.firstName) close();
+    if (!data.firstName || data.firstName === firstName) close();
     else {
       dispatch(changeFirstName(data.firstName));
     }

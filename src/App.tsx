@@ -5,7 +5,7 @@ import {
 } from "react-router-dom";
 import Chat from "./components/chats/chat/Chat";
 import { ThemeContext } from "./context/theme-context";
-import AllChats from "./pages/AllChats";
+import AllChats from "./pages/Chats";
 import ChatsLayout from "./pages/ChatsLayout";
 import RootLayout from "./pages/RootLayout";
 import Settings from "./pages/Settings";
@@ -32,6 +32,7 @@ import { auth } from "./services/firebase";
 import { clearUser } from "./redux/userSlice";
 import { loadUser, signUp } from "./redux/userActions";
 import { isPending } from "@reduxjs/toolkit";
+import Chats from "./pages/Chats";
 
 const router = createBrowserRouter([
   {
@@ -48,27 +49,27 @@ const router = createBrowserRouter([
         children: [
           {
             path: "all",
-            element: <AllChats />,
+            element: <Chats />,
             children: [{ path: ":chatId", element: <Chat /> }],
           },
           {
             path: "favourites",
-            element: <Favourites />,
+            element: <Chats />,
             children: [{ path: ":chatId", element: <Chat /> }],
           },
           {
             path: "archived",
-            element: <Archived />,
+            element: <Chats />,
             children: [{ path: ":chatId", element: <Chat /> }],
           },
           {
             path: "blocked",
-            element: <Blocked />,
+            element: <Chats />,
             children: [{ path: ":chatId", element: <Chat /> }],
           },
           {
             path: "trash",
-            element: <Trash />,
+            element: <Chats />,
             children: [{ path: ":chatId", element: <Chat /> }],
           },
           { path: "", element: <Navigate to={"all"} replace /> },
