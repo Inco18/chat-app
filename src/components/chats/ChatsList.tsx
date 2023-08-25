@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { NavLink, useMatches } from "react-router-dom";
+import { NavLink, useMatches, useNavigate } from "react-router-dom";
 import useWindowSize from "../../hooks/useWindowSize";
 import { ReactComponent as Magnifier } from "../../assets/magnifier.svg";
 import { ReactComponent as Arrow } from "../../assets/arrow.svg";
@@ -17,6 +17,10 @@ import {
   where,
 } from "firebase/firestore";
 import { auth, db } from "../../services/firebase";
+import Modal from "../modals/Modal";
+import GroupChatModal from "../modals/GroupChatModal";
+import { useAppDispatch, useAppSelector } from "../../hooks/reduxHooks";
+import { createChat } from "../../redux/chatActions";
 
 const ChatsList = () => {
   const [search, setSearch] = useState<string>("");
@@ -25,9 +29,13 @@ const ChatsList = () => {
   const [filteredList, setFilteredList] = useState<any[]>([]);
   const [usersList, setUsersList] = useState<any[]>([]);
   const [isLoadingUsers, setIsLoadingUsers] = useState(true);
+  const [groupModalIsOpen, setGroupModalIsOpen] = useState(false);
   const windowSize = useWindowSize();
   const inputRef = useRef<HTMLInputElement>(null);
+  const navigate = useNavigate();
   const matches = useMatches();
+  const dispatch = useAppDispatch();
+  const chatState = useAppSelector((state) => state.chat);
 
   useEffect(() => {
     if (windowSize.width) {
@@ -86,24 +94,30 @@ const ChatsList = () => {
       Promise.all(
         querySnapshot.docs.map(async (chatDocSnap: any) => {
           const chatData = chatDocSnap.data();
+          if (chatData.title) {
+            return {
+              id: chatDocSnap.id,
+              ...chatData,
+            };
+          } else {
+            const otherUserId = chatData.users.filter(
+              (id: string) => id !== auth.currentUser?.uid
+            )[0];
+            const userDocRef = doc(db, "users", otherUserId);
+            const userDocSnap = await getDoc(userDocRef);
 
-          const otherUserId = chatData.users.filter(
-            (id: string) => id !== auth.currentUser?.uid
-          )[0];
-          const userDocRef = doc(db, "users", otherUserId);
-          const userDocSnap = await getDoc(userDocRef);
-
-          return {
-            id: chatDocSnap.id,
-            userInfo: {
-              id: otherUserId,
-              img: userDocSnap.data()?.avatarUrl,
-              firstName: userDocSnap.data()?.firstName,
-              lastName: userDocSnap.data()?.lastName,
-              sex: userDocSnap.data()?.sex,
-            },
-            ...chatData,
-          };
+            return {
+              id: chatDocSnap.id,
+              userInfo: {
+                id: otherUserId,
+                img: userDocSnap.data()?.avatarUrl,
+                firstName: userDocSnap.data()?.firstName,
+                lastName: userDocSnap.data()?.lastName,
+                sex: userDocSnap.data()?.sex,
+              },
+              ...chatData,
+            };
+          }
         })
       ).then((chatsArr) => {
         setList(chatsArr);
@@ -122,9 +136,10 @@ const ChatsList = () => {
           !chat.blocked.includes(auth.currentUser?.uid) &&
           !chat.archived &&
           !chat.trash.includes(auth.currentUser?.uid) &&
-          `${chat.userInfo.firstName.toLowerCase()} ${chat.userInfo.lastName.toLowerCase()}`.startsWith(
+          (`${chat.userInfo.firstName.toLowerCase()} ${chat.userInfo.lastName.toLowerCase()}`.startsWith(
             search.toLowerCase()
-          )
+          ) ||
+            chat.title.startsWith(search.toLowerCase()))
         );
       if (matches[2].pathname.includes("chats/favourites"))
         return chat.favourite.includes(auth.currentUser?.uid);
@@ -137,6 +152,13 @@ const ChatsList = () => {
 
     setFilteredList(filtered);
   }, [list, matches[2].pathname, search]);
+
+  useEffect(() => {
+    if (chatState.status === "idle" && chatState.id) {
+      navigate(chatState.id);
+      setSearch("");
+    }
+  }, [chatState.id, chatState.status]);
 
   return (
     <div className={`${styles.listContainer} ${thinList ? styles.thin : ""}`}>
@@ -168,10 +190,20 @@ const ChatsList = () => {
           ref={inputRef}
         />
       </div>
-      <button className={styles.groupButton}>
+      <button
+        className={styles.groupButton}
+        onClick={() => setGroupModalIsOpen(true)}
+      >
         <Group className={styles.groupButtonIcon} />
-        <p>Create a group conversation</p>
+        <p>Create a group chat</p>
       </button>
+      <Modal
+        isOpen={groupModalIsOpen}
+        closeFunction={() => setGroupModalIsOpen(false)}
+        title={"Create a group chat"}
+      >
+        <GroupChatModal />
+      </Modal>
       <div className={styles.chatsOuter} id="scrollableDiv">
         <div className={styles.chatsInner}>
           {usersList.length > 0 && filteredList.length > 0 && (
@@ -186,16 +218,18 @@ const ChatsList = () => {
                   " " +
                   styles["navlink"] +
                   " " +
-                  (!chat.lastMsg.readBy.includes(auth.currentUser?.uid)
+                  (chat.lastMsg.readBy &&
+                  !chat.lastMsg.readBy.includes(auth.currentUser?.uid)
                     ? styles.unread
                     : "")
                 }
                 title={`${chat.userInfo.firstName} ${chat.userInfo.lastName}`}
                 key={chat.id}
               >
-                {!chat.lastMsg.readBy.includes(auth.currentUser?.uid) && (
-                  <div className={styles.dot} />
-                )}
+                {chat.lastMsg.readBy &&
+                  !chat.lastMsg.readBy.includes(auth.currentUser?.uid) && (
+                    <div className={styles.dot} />
+                  )}
                 <img
                   src={
                     chat.userInfo.img
@@ -206,7 +240,13 @@ const ChatsList = () => {
                   }
                   className={styles.profileImg}
                 />
-                <div className={styles.profileRightContainer}>
+                <div
+                  className={
+                    chat.lastMsg.readBy
+                      ? styles.profileRightContainer
+                      : styles.profileRightContainerNoMsg
+                  }
+                >
                   <p
                     className={styles.name}
                   >{`${chat.userInfo.firstName} ${chat.userInfo.lastName}`}</p>
@@ -225,6 +265,7 @@ const ChatsList = () => {
                 className={styles["navlink"]}
                 title={`${user.firstName} ${user.lastName}`}
                 key={user.id}
+                onClick={() => dispatch(createChat(user))}
               >
                 <img
                   src={

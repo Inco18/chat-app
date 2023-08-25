@@ -11,6 +11,7 @@ import ChatInput from "./ChatInput";
 import Messages from "./Messages";
 import ChatSidebar from "./ChatSidebar";
 import { useLocation } from "react-router-dom";
+import { useAppSelector } from "../../../hooks/reduxHooks";
 
 const sidebarClassnames = {
   enter: styles.sidebarEnter,
@@ -24,6 +25,7 @@ const Chat = () => {
   const [searchInputVisible, setSearchInputVisible] = useState<boolean>(false);
   const sidebarRef = useRef<HTMLDivElement>(null);
   const { pathname } = useLocation();
+  const chat = useAppSelector((state) => state.chat);
 
   return (
     <>
@@ -33,7 +35,9 @@ const Chat = () => {
             <img src={defaultImg} />
             <p>
               <span>Conversation with</span>{" "}
-              <span className={styles.bold}>John Paul</span>
+              <span className={styles.bold}>
+                {chat.users[1].firstName} {chat.users[1].lastName}
+              </span>
             </p>
           </div>
           <Dots

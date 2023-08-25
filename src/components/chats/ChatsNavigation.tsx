@@ -23,7 +23,6 @@ const ChatsNavigation = () => {
           <Star className={styles.icon} />
           Favourites
         </div>
-        <span className={styles.number}>3</span>
       </NavLink>
       <NavLink
         title="All"
@@ -36,7 +35,6 @@ const ChatsNavigation = () => {
           <Chats className={styles.icon} />
           All
         </div>
-        <span className={styles.number}>35</span>
       </NavLink>
       <NavLink
         title="Archived"
@@ -49,7 +47,6 @@ const ChatsNavigation = () => {
           <Archived className={styles.icon} />
           Archived
         </div>
-        <span className={styles.number}>12</span>
       </NavLink>
       <NavLink
         title="Blocked"

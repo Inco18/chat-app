@@ -1,5 +1,5 @@
 .listContainer {
-  max-width: 18rem;
+  max-width: 17rem;
   position: relative;
   transition: 0.3s;
   max-height: 100%;
@@ -103,7 +103,7 @@
   padding: 0.3rem 0;
   display: grid;
   grid-template-columns: auto auto;
-  place-items: center;
+  justify-content: start;
   border-radius: 0.7rem;
   border: 0;
   background-color: var(--accent-dark);
@@ -115,7 +115,7 @@
 }
 
 .groupButton * {
-  transition: opacity 0.1s, transform 0.3s, margin 0.3s;
+  transition: opacity 0.1s, margin 0.3s;
   opacity: 0.7;
   max-height: 100%;
   overflow: visible;
