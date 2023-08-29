@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { CSSTransition } from "react-transition-group";
 import defaultImg from "../../../assets/default.png";
 import { ReactComponent as Dots } from "../../../assets/three-dots.svg";
@@ -10,8 +10,10 @@ import styles from "./Chat.module.css";
 import ChatInput from "./ChatInput";
 import Messages from "./Messages";
 import ChatSidebar from "./ChatSidebar";
-import { useLocation } from "react-router-dom";
-import { useAppSelector } from "../../../hooks/reduxHooks";
+import { useLocation, useParams } from "react-router-dom";
+import { useAppDispatch, useAppSelector } from "../../../hooks/reduxHooks";
+import Spinner from "../../UI/Spinner";
+import { openChatWithId } from "../../../redux/chatActions";
 
 const sidebarClassnames = {
   enter: styles.sidebarEnter,
@@ -25,91 +27,102 @@ const Chat = () => {
   const [searchInputVisible, setSearchInputVisible] = useState<boolean>(false);
   const sidebarRef = useRef<HTMLDivElement>(null);
   const { pathname } = useLocation();
-  const chat = useAppSelector((state) => state.chat);
+  const chatState = useAppSelector((state) => state.chat);
+  const dispatch = useAppDispatch();
+  const params = useParams();
 
-  return (
-    <>
-      <div className={styles.container}>
-        <div className={styles.topBar}>
-          <div className={styles.topBarLeft}>
-            <img src={defaultImg} />
-            <p>
-              <span>Conversation with</span>{" "}
-              <span className={styles.bold}>
-                {chat.users[1].firstName} {chat.users[1].lastName}
-              </span>
-            </p>
+  useEffect(() => {
+    if (params.chatId && !chatState.id && chatState.status !== "openingChat") {
+      dispatch(openChatWithId(params.chatId));
+    }
+  }, [params]);
+
+  if (chatState.status === "openingChat") return <Spinner />;
+
+  if (chatState.status === "idle" && chatState.id)
+    return (
+      <>
+        <div className={styles.container}>
+          <div className={styles.topBar}>
+            <div className={styles.topBarLeft}>
+              <img src={defaultImg} />
+              <p>
+                <span>Conversation with</span>{" "}
+                <span className={styles.bold}>
+                  {chatState.users[1].firstName} {chatState.users[1].lastName}
+                </span>
+              </p>
+            </div>
+            <Dots
+              className={styles.dots}
+              onClick={() => setSidebarVisible((prev) => !prev)}
+            />
           </div>
-          <Dots
-            className={styles.dots}
-            onClick={() => setSidebarVisible((prev) => !prev)}
-          />
+
+          {searchInputVisible && (
+            <div className={styles.searchContainer}>
+              <form className={styles.searchForm}>
+                <div className={styles.inputContainer}>
+                  <input
+                    type="text"
+                    className={styles.searchInput}
+                    placeholder="Search"
+                  />
+                  <button type="submit" className={styles.submitButton}>
+                    <Magnifier className={styles.buttonIcon} />
+                  </button>
+                </div>
+              </form>
+              <div className={styles.searchRightContainer}>
+                <p className={styles.foundNumber}>Found: 5</p>
+                <Arrow
+                  style={{
+                    transform: "rotate(90deg)",
+                    color: "var(--accent-main)",
+                    opacity: 1,
+                    cursor: "pointer",
+                  }}
+                  className={styles.arrow}
+                />
+                <Arrow
+                  style={{ transform: "rotate(-90deg)" }}
+                  className={styles.arrow}
+                />
+                <Close
+                  className={styles.closeIcon}
+                  onClick={() => setSearchInputVisible(false)}
+                />
+              </div>
+            </div>
+          )}
+
+          <Messages />
+          {!pathname.includes("archived") &&
+          !pathname.includes("blocked") &&
+          !pathname.includes("trash") ? (
+            <ChatInput />
+          ) : (
+            <p className={styles.chatInputHidden}>
+              You cannot send any messages in this chat
+            </p>
+          )}
         </div>
 
-        {searchInputVisible && (
-          <div className={styles.searchContainer}>
-            <form className={styles.searchForm}>
-              <div className={styles.inputContainer}>
-                <input
-                  type="text"
-                  className={styles.searchInput}
-                  placeholder="Search"
-                />
-                <button type="submit" className={styles.submitButton}>
-                  <Magnifier className={styles.buttonIcon} />
-                </button>
-              </div>
-            </form>
-            <div className={styles.searchRightContainer}>
-              <p className={styles.foundNumber}>Found: 5</p>
-              <Arrow
-                style={{
-                  transform: "rotate(90deg)",
-                  color: "var(--accent-main)",
-                  opacity: 1,
-                  cursor: "pointer",
-                }}
-                className={styles.arrow}
-              />
-              <Arrow
-                style={{ transform: "rotate(-90deg)" }}
-                className={styles.arrow}
-              />
-              <Close
-                className={styles.closeIcon}
-                onClick={() => setSearchInputVisible(false)}
-              />
-            </div>
-          </div>
-        )}
-
-        <Messages />
-        {!pathname.includes("archived") &&
-        !pathname.includes("blocked") &&
-        !pathname.includes("trash") ? (
-          <ChatInput />
-        ) : (
-          <p className={styles.chatInputHidden}>
-            You cannot send any messages in this chat
-          </p>
-        )}
-      </div>
-
-      <CSSTransition
-        in={sidebarVisible}
-        nodeRef={sidebarRef}
-        timeout={500}
-        classNames={sidebarClassnames}
-        unmountOnExit
-      >
-        <ChatSidebar
-          ref={sidebarRef}
-          className={styles.sidebar}
-          toggleSearchInput={() => setSearchInputVisible((prev) => !prev)}
-        />
-      </CSSTransition>
-    </>
-  );
+        <CSSTransition
+          in={sidebarVisible}
+          nodeRef={sidebarRef}
+          timeout={500}
+          classNames={sidebarClassnames}
+          unmountOnExit
+        >
+          <ChatSidebar
+            ref={sidebarRef}
+            className={styles.sidebar}
+            toggleSearchInput={() => setSearchInputVisible((prev) => !prev)}
+          />
+        </CSSTransition>
+      </>
+    );
 };
 
 export default Chat;

@@ -23,7 +23,7 @@ import {
 import { IFormInput } from "../components/form/SignUpForm";
 import { initialState, userStateType } from "./userSlice";
 import { signInForm } from "../components/form/SignInForm";
-import { loadUserFromDb, reauthenticate } from "../services/auth";
+import { reauthenticate } from "../services/auth";
 import {
   deleteObject,
   getDownloadURL,
@@ -31,6 +31,7 @@ import {
   uploadBytes,
 } from "firebase/storage";
 import { RootState } from "./store";
+import { loadUserFromDb } from "../services/firestore";
 
 export const signUp = createAsyncThunk(
   "user/signUp",

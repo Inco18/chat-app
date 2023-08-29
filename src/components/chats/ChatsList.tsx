@@ -5,8 +5,6 @@ import { ReactComponent as Magnifier } from "../../assets/magnifier.svg";
 import { ReactComponent as Arrow } from "../../assets/arrow.svg";
 import { ReactComponent as Group } from "../../assets/group.svg";
 import { ReactComponent as SmallSpinner } from "../../assets/spinner.svg";
-
-import styles from "./ChatsList.module.css";
 import {
   collection,
   doc,
@@ -20,7 +18,9 @@ import { auth, db } from "../../services/firebase";
 import Modal from "../modals/Modal";
 import GroupChatModal from "../modals/GroupChatModal";
 import { useAppDispatch, useAppSelector } from "../../hooks/reduxHooks";
-import { createChat } from "../../redux/chatActions";
+import { createChat, openChatWithClick } from "../../redux/chatActions";
+
+import styles from "./ChatsList.module.css";
 
 const ChatsList = () => {
   const [search, setSearch] = useState<string>("");
@@ -136,10 +136,11 @@ const ChatsList = () => {
           !chat.blocked.includes(auth.currentUser?.uid) &&
           !chat.archived &&
           !chat.trash.includes(auth.currentUser?.uid) &&
-          (`${chat.userInfo.firstName.toLowerCase()} ${chat.userInfo.lastName.toLowerCase()}`.startsWith(
-            search.toLowerCase()
-          ) ||
-            chat.title.startsWith(search.toLowerCase()))
+          ((chat.userInfo &&
+            `${chat.userInfo.firstName.toLowerCase()} ${chat.userInfo.lastName.toLowerCase()}`.startsWith(
+              search.toLowerCase()
+            )) ||
+            chat.title.toLowerCase().startsWith(search.toLowerCase()))
         );
       if (matches[2].pathname.includes("chats/favourites"))
         return chat.favourite.includes(auth.currentUser?.uid);
@@ -157,6 +158,7 @@ const ChatsList = () => {
     if (chatState.status === "idle" && chatState.id) {
       navigate(chatState.id);
       setSearch("");
+      setGroupModalIsOpen(false);
     }
   }, [chatState.id, chatState.status]);
 
@@ -212,6 +214,7 @@ const ChatsList = () => {
           {filteredList.map((chat) => {
             return (
               <NavLink
+                onClick={() => dispatch(openChatWithClick(chat))}
                 to={chat.id}
                 className={({ isActive }) =>
                   (isActive ? styles["active"] : "") +
@@ -223,7 +226,11 @@ const ChatsList = () => {
                     ? styles.unread
                     : "")
                 }
-                title={`${chat.userInfo.firstName} ${chat.userInfo.lastName}`}
+                title={
+                  chat.title
+                    ? chat.title
+                    : `${chat.userInfo.firstName} ${chat.userInfo.lastName}`
+                }
                 key={chat.id}
               >
                 {chat.lastMsg.readBy &&
@@ -232,7 +239,11 @@ const ChatsList = () => {
                   )}
                 <img
                   src={
-                    chat.userInfo.img
+                    chat.title
+                      ? chat.chatImgUrl
+                        ? chat.chatImgUrl
+                        : "/defaultGroup.webp"
+                      : chat.userInfo.img
                       ? chat.userInfo.img
                       : chat.userInfo.sex === "female"
                       ? "/defaultFemale.webp"
@@ -247,9 +258,11 @@ const ChatsList = () => {
                       : styles.profileRightContainerNoMsg
                   }
                 >
-                  <p
-                    className={styles.name}
-                  >{`${chat.userInfo.firstName} ${chat.userInfo.lastName}`}</p>
+                  <p className={styles.name}>
+                    {chat.title
+                      ? chat.title
+                      : `${chat.userInfo.firstName} ${chat.userInfo.lastName}`}
+                  </p>
                   <p className={styles.lastMsg}>{chat.lastMsg.value}</p>
                 </div>
               </NavLink>

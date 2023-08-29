@@ -1,5 +1,10 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { createChat } from "./chatActions";
+import {
+  createChat,
+  createGroupChat,
+  openChatWithClick,
+  openChatWithId,
+} from "./chatActions";
 import { toast } from "react-toastify";
 
 export type chatStateType = {
@@ -49,7 +54,44 @@ const chatSlice = createSlice({
       })
       .addCase(createChat.rejected, (state, action) => {
         state.status = "error";
-        toast.error("Could not create chat");
+        toast.error("Could not create chat: " + action.error.message);
+      })
+      .addCase(createGroupChat.pending, (state) => {
+        state.status = "creatingGroupChat";
+      })
+      .addCase(createGroupChat.fulfilled, (state, action) => {
+        toast.success("Group chat created successfully");
+        return { ...action.payload, status: "idle" };
+      })
+      .addCase(createGroupChat.rejected, (state, action) => {
+        state.status = "error";
+        toast.error("Could not create group chat: " + action.error.message);
+      })
+      .addCase(openChatWithClick.pending, (state) => {
+        state.status = "openingChat";
+      })
+      .addCase(openChatWithClick.fulfilled, (state, action) => {
+        return {
+          ...action.payload,
+          status: "idle",
+        };
+      })
+      .addCase(openChatWithClick.rejected, (state, action) => {
+        state.status = "error";
+        toast.error("Could not open chat: " + action.error.message);
+      })
+      .addCase(openChatWithId.pending, (state) => {
+        state.status = "openingChat";
+      })
+      .addCase(openChatWithId.fulfilled, (state, action) => {
+        return {
+          ...action.payload,
+          status: "idle",
+        };
+      })
+      .addCase(openChatWithId.rejected, (state, action) => {
+        state.status = "error";
+        toast.error("Could not open chat: " + action.error.message);
       });
   },
 });

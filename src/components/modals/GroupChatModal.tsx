@@ -10,6 +10,8 @@ import ReactSlider from "react-slider";
 import styles from "./GroupChatModal.module.css";
 import { query, collection, where, getDocs } from "firebase/firestore";
 import { db, auth } from "../../services/firebase";
+import { useAppDispatch, useAppSelector } from "../../hooks/reduxHooks";
+import { createGroupChat } from "../../redux/chatActions";
 
 const GroupChatModal = () => {
   const [image, setImage] = useState<File>();
@@ -19,7 +21,6 @@ const GroupChatModal = () => {
   const [isLoadingUsers, setIsLoadingUsers] = useState(false);
   const [usersResults, setUserResults] = useState<any[]>([]);
   const [usersList, setUsersList] = useState<any[]>([]);
-
   const imgInputRef = useRef<HTMLInputElement>(null);
   const editorRef = useRef(null);
   const {
@@ -30,6 +31,9 @@ const GroupChatModal = () => {
   } = useForm<{ title: string }>({
     defaultValues: { title: "" },
   });
+  const dispatch = useAppDispatch();
+  const chatState = useAppSelector((state) => state.chat);
+  const isCreating = chatState.status === "creatingGroupChat";
 
   const handleImgDrop = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
@@ -54,13 +58,33 @@ const GroupChatModal = () => {
 
   const onSubmit: SubmitHandler<{ title: string }> = (data) => {
     console.log(data);
+    console.log(usersList);
     if (usersList.length < 1) {
       toast.error("You need to add at least 1 person to this chat");
       return;
     }
     if (editorRef.current) {
       //@ts-ignore
-      editorRef.current.getImage().toBlob((blob: Blob) => {}, "image/jpeg", 1);
+      editorRef.current.getImage().toBlob(
+        (blob: Blob) => {
+          dispatch(
+            createGroupChat({
+              title: data.title,
+              users: usersList,
+              imgBlob: blob,
+            })
+          );
+        },
+        "image/jpeg",
+        1
+      );
+    } else {
+      dispatch(
+        createGroupChat({
+          title: data.title,
+          users: usersList,
+        })
+      );
     }
   };
 
@@ -307,8 +331,16 @@ const GroupChatModal = () => {
           })}
         </div>
       </div>
-      <button type="submit" className={styles.submitButton}>
-        Create
+      <button
+        type="submit"
+        className={styles.submitButton}
+        disabled={isCreating}
+      >
+        {isCreating ? (
+          <span className={styles.loadingButtonText}>Creating</span>
+        ) : (
+          "Create"
+        )}
       </button>
     </form>
   );
