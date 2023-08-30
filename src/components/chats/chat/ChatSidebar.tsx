@@ -11,6 +11,7 @@ import OptionHeader from "./Sidebar/OptionHeader";
 
 import styles from "./ChatSidebar.module.css";
 import { useLocation } from "react-router-dom";
+import { useAppSelector } from "../../../hooks/reduxHooks";
 
 export type stateType = {
   attachmentsVisible: boolean;
@@ -52,6 +53,7 @@ const ChatSidebar = React.forwardRef(
       initialAttachments: "photos",
     });
     const { pathname } = useLocation();
+    const chatState = useAppSelector((state) => state.chat);
 
     return (
       <div className={props.className} ref={ref}>

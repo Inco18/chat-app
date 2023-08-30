@@ -46,7 +46,7 @@ export const loadChatUsers = async (
           };
         const docSnap = await getDoc(doc(db, "users", userId));
         if (docSnap.exists())
-          return { ...docSnap.data(), id: userId, notifications: null };
+          return { ...docSnap.data(), uid: userId, notifications: null };
         else return undefined;
       })
     );

@@ -1,7 +1,9 @@
 import { createSlice } from "@reduxjs/toolkit";
 import {
+  changeChatTheme,
   createChat,
   createGroupChat,
+  handleFavourite,
   openChatWithClick,
   openChatWithId,
 } from "./chatActions";
@@ -11,6 +13,9 @@ export type chatStateType = {
   status: string;
   id: string;
   messages: { sentAt: Date; sentBy: string; type: string; value: string }[];
+  favourite: string[];
+  blocked: string[];
+  archived: boolean;
   users: {
     firstName: string;
     lastName: string;
@@ -22,6 +27,8 @@ export type chatStateType = {
   chatImgUrl: string;
   settings: {
     themeColor: string;
+    themeColorLight: string;
+    themeColorLightHover: string;
     nicknames: { uid: string; nickname: string }[];
   };
 };
@@ -30,11 +37,16 @@ export const initialState: chatStateType = {
   status: "idle",
   id: "",
   messages: [],
+  favourite: [],
+  blocked: [],
+  archived: false,
   users: [],
   title: "",
   chatImgUrl: "",
   settings: {
     themeColor: "",
+    themeColorLight: "",
+    themeColorLightHover: "",
     nicknames: [],
   },
 };
@@ -92,6 +104,31 @@ const chatSlice = createSlice({
       .addCase(openChatWithId.rejected, (state, action) => {
         state.status = "error";
         toast.error("Could not open chat: " + action.error.message);
+      })
+      .addCase(handleFavourite.pending, (state) => {
+        state.status = "handlingFavourites";
+      })
+      .addCase(handleFavourite.fulfilled, (state, action) => {
+        state.favourite = action.payload;
+        state.status = "idle";
+      })
+      .addCase(handleFavourite.rejected, (state, action) => {
+        state.status = "error";
+        toast.error("Could not add to favourites: " + action.error.message);
+      })
+      .addCase(changeChatTheme.pending, (state) => {
+        state.status = "changingTheme";
+      })
+      .addCase(changeChatTheme.fulfilled, (state, action) => {
+        state.settings.themeColor = action.payload[0];
+        state.settings.themeColorLight = action.payload[1];
+        state.settings.themeColorLightHover = action.payload[2];
+        state.status = "idle";
+        toast.success("Chat theme changed successfully");
+      })
+      .addCase(changeChatTheme.rejected, (state, action) => {
+        state.status = "error";
+        toast.error("Could not change theme: " + action.error.message);
       });
   },
 });

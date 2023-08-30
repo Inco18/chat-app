@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import styles from "./Customize.module.css";
 import OptionHeader from "./OptionHeader";
@@ -6,6 +6,7 @@ import AnimateHeight from "react-animate-height";
 import Modal from "../../../modals/Modal";
 import ChangeThemeModal from "../../../modals/ChangeThemeModal";
 import EditNicknamesModal from "../../../modals/EditNicknamesModal";
+import { useAppSelector } from "../../../../hooks/reduxHooks";
 
 const Customize = () => {
   const [customizeVisible, setCustomizeVisible] = useState<boolean>(false);
@@ -13,6 +14,11 @@ const Customize = () => {
     useState<boolean>(false);
   const [editNicknamesModalOpen, setEditNicknamesModalOpen] =
     useState<boolean>(false);
+  const chatState = useAppSelector((state) => state.chat);
+
+  useEffect(() => {
+    if (chatState.status === "idle") setChangeThemeModalOpen(false);
+  }, [chatState.status]);
 
   return (
     <>

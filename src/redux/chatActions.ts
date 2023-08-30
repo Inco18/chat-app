@@ -9,6 +9,7 @@ import {
   orderBy,
   query,
   setDoc,
+  updateDoc,
 } from "firebase/firestore";
 import { auth, db, storage } from "../services/firebase";
 import { userStateType } from "./userSlice";
@@ -155,4 +156,50 @@ export const openChatWithId = createAsyncThunk<
   } else {
     throw new Error("This chat doesn't exist");
   }
+});
+
+export const handleFavourite = createAsyncThunk<
+  any,
+  any,
+  { state: { user: userStateType; chat: chatStateType } }
+>("chat/handleFavourite", async (_, { getState }) => {
+  const userId = auth.currentUser?.uid;
+  if (!userId) throw new Error("Could not get user's id");
+  const favouritesArray = [...getState().chat.favourite];
+  let resultArray = [];
+  if (favouritesArray.includes(userId)) {
+    console.log(1);
+    resultArray = favouritesArray.filter((uid) => {
+      return uid !== userId;
+    });
+    console.log(favouritesArray);
+  } else {
+    resultArray.push(userId);
+  }
+  await updateDoc(doc(db, "chats", getState().chat.id), {
+    favourite: resultArray,
+  });
+  return resultArray;
+});
+
+export const editNickname = createAsyncThunk(
+  "chat/editNickname",
+  async (data: { newNickname: string; uid: string }) => {
+    console.log(data);
+  }
+);
+
+export const changeChatTheme = createAsyncThunk<
+  string[],
+  string[],
+  { state: { user: userStateType; chat: chatStateType } }
+>("chat/changeChatTheme", async (themeColors: string[], { getState }) => {
+  const chatId = getState().chat.id;
+  await updateDoc(doc(db, "chats", chatId), {
+    "settings.themeColor": themeColors[0],
+    "settings.themeColorLight": themeColors[1],
+    "settings.themeColorLightHover": themeColors[2],
+  });
+
+  return themeColors;
 });

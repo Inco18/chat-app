@@ -39,18 +39,45 @@ const Chat = () => {
 
   if (chatState.status === "openingChat") return <Spinner />;
 
-  if (chatState.status === "idle" && chatState.id)
+  if (
+    (chatState.status === "idle" ||
+      chatState.status === "changingTheme" ||
+      chatState.status === "handlingFavourites") &&
+    chatState.id
+  )
     return (
       <>
         <div className={styles.container}>
           <div className={styles.topBar}>
             <div className={styles.topBarLeft}>
-              <img src={defaultImg} />
+              <img
+                src={
+                  chatState.title
+                    ? chatState.chatImgUrl
+                      ? chatState.chatImgUrl
+                      : "/defaultGroup.webp"
+                    : chatState.users[1].avatarUrl
+                    ? chatState.users[1].avatarUrl
+                    : chatState.users[1].sex === "female"
+                    ? "/defaultFemale.webp"
+                    : "/defaultMale.webp"
+                }
+              />
               <p>
-                <span>Conversation with</span>{" "}
-                <span className={styles.bold}>
-                  {chatState.users[1].firstName} {chatState.users[1].lastName}
-                </span>
+                {chatState.title ? (
+                  <>
+                    <span>Group conversation: </span>{" "}
+                    <span className={styles.bold}>{chatState.title}</span>
+                  </>
+                ) : (
+                  <>
+                    <span>Conversation with</span>{" "}
+                    <span className={styles.bold}>
+                      {chatState.users[1].firstName}{" "}
+                      {chatState.users[1].lastName}
+                    </span>
+                  </>
+                )}
               </p>
             </div>
             <Dots

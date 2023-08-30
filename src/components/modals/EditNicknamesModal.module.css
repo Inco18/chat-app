@@ -61,7 +61,20 @@
   opacity: 0.5;
 }
 
-.checkImg:hover {
+.submitBtn {
+  border: 0;
+  padding: 0;
+  width: 1.5rem;
+  height: 1.5rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: transparent;
+  margin-left: auto;
+  cursor: pointer;
+}
+
+.submitBtn:hover {
   border-radius: 100vw;
   background-color: var(--accent-dark);
 }

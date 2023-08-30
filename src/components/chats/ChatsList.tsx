@@ -6,6 +6,7 @@ import { ReactComponent as Arrow } from "../../assets/arrow.svg";
 import { ReactComponent as Group } from "../../assets/group.svg";
 import { ReactComponent as SmallSpinner } from "../../assets/spinner.svg";
 import {
+  Timestamp,
   collection,
   doc,
   getDoc,
@@ -109,13 +110,19 @@ const ChatsList = () => {
             return {
               id: chatDocSnap.id,
               userInfo: {
-                id: otherUserId,
-                img: userDocSnap.data()?.avatarUrl,
+                uid: otherUserId,
+                avatarUrl: userDocSnap.data()?.avatarUrl,
                 firstName: userDocSnap.data()?.firstName,
                 lastName: userDocSnap.data()?.lastName,
                 sex: userDocSnap.data()?.sex,
               },
               ...chatData,
+              lastMsg: chatData.lastMsg.value
+                ? {
+                    ...chatData.lastMsg,
+                    timestamp: chatData.lastMsg.timestamp.toDate(),
+                  }
+                : {},
             };
           }
         })
@@ -132,7 +139,6 @@ const ChatsList = () => {
     const filtered = list.filter((chat) => {
       if (matches[2].pathname.includes("chats/all"))
         return (
-          !chat.favourite.includes(auth.currentUser?.uid) &&
           !chat.blocked.includes(auth.currentUser?.uid) &&
           !chat.archived &&
           !chat.trash.includes(auth.currentUser?.uid) &&
@@ -156,7 +162,7 @@ const ChatsList = () => {
 
   useEffect(() => {
     if (chatState.status === "idle" && chatState.id) {
-      navigate(chatState.id);
+      navigate(`/chats/all/${chatState.id}`);
       setSearch("");
       setGroupModalIsOpen(false);
     }
@@ -243,8 +249,8 @@ const ChatsList = () => {
                       ? chat.chatImgUrl
                         ? chat.chatImgUrl
                         : "/defaultGroup.webp"
-                      : chat.userInfo.img
-                      ? chat.userInfo.img
+                      : chat.userInfo.avatarUrl
+                      ? chat.userInfo.avatarUrl
                       : chat.userInfo.sex === "female"
                       ? "/defaultFemale.webp"
                       : "/defaultMale.webp"
