@@ -40,9 +40,8 @@ const Chat = () => {
   if (chatState.status === "openingChat") return <Spinner />;
 
   if (
-    (chatState.status === "idle" ||
-      chatState.status === "changingTheme" ||
-      chatState.status === "handlingFavourites") &&
+    chatState.status !== "error" &&
+    chatState.status !== "openingChat" &&
     chatState.id
   )
     return (

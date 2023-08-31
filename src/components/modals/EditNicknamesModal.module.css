@@ -74,7 +74,11 @@
   cursor: pointer;
 }
 
-.submitBtn:hover {
+.submitBtn:hover:not(:disabled) {
   border-radius: 100vw;
   background-color: var(--accent-dark);
+}
+
+.submitBtn:disabled {
+  cursor: not-allowed;
 }

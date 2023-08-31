@@ -46,7 +46,12 @@ export const loadChatUsers = async (
           };
         const docSnap = await getDoc(doc(db, "users", userId));
         if (docSnap.exists())
-          return { ...docSnap.data(), uid: userId, notifications: null };
+          return {
+            ...docSnap.data(),
+            uid: userId,
+            notifications: null,
+            birthDate: docSnap.data().birthDate.toDate().toString(),
+          };
         else return undefined;
       })
     );
@@ -64,4 +69,20 @@ export const loadChatUsers = async (
   }
 
   return newUsers;
+};
+
+export const handleOtherAction = (startingArray: string[]) => {
+  const userId = auth.currentUser?.uid;
+  if (!userId) throw new Error("Could not get user's id");
+  let resultArray = [];
+  if (startingArray.includes(userId)) {
+    console.log(1);
+    resultArray = startingArray.filter((uid) => {
+      return uid !== userId;
+    });
+    console.log(startingArray);
+  } else {
+    resultArray.push(userId);
+  }
+  return resultArray;
 };

@@ -5,9 +5,6 @@ import {
   collection,
   doc,
   getDoc,
-  limit,
-  orderBy,
-  query,
   setDoc,
   updateDoc,
 } from "firebase/firestore";
@@ -15,7 +12,7 @@ import { auth, db, storage } from "../services/firebase";
 import { userStateType } from "./userSlice";
 import { chatStateType } from "./chatSlice";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
-import { loadChatUsers } from "../services/firestore";
+import { handleOtherAction, loadChatUsers } from "../services/firestore";
 
 export const createChat = createAsyncThunk<
   any,
@@ -27,10 +24,16 @@ export const createChat = createAsyncThunk<
   const dbObject = {
     archived: false,
     blocked: [],
+    muted: [],
     chatImgUrl: "",
     favourite: [],
     lastMsg: {},
-    settings: { nicknames: {}, themeColor: "#5852d6" },
+    settings: {
+      nicknames: {},
+      themeColor: "#5852d6",
+      themeColorLight: "#6963db",
+      themeColorLightHover: "#837ee4",
+    },
     title: "",
     trash: [],
     users: [auth.currentUser?.uid, userData.id],
@@ -77,10 +80,16 @@ export const createGroupChat = createAsyncThunk<
   const dbObject = {
     archived: false,
     blocked: [],
+    muted: [],
     chatImgUrl: "",
     favourite: [],
     lastMsg: {},
-    settings: { nicknames: {}, themeColor: "#5852d6" },
+    settings: {
+      nicknames: {},
+      themeColor: "#5852d6",
+      themeColorLight: "#6963db",
+      themeColorLightHover: "#837ee4",
+    },
     title: chatData.title,
     trash: [],
     users: [
@@ -163,29 +172,26 @@ export const handleFavourite = createAsyncThunk<
   any,
   { state: { user: userStateType; chat: chatStateType } }
 >("chat/handleFavourite", async (_, { getState }) => {
-  const userId = auth.currentUser?.uid;
-  if (!userId) throw new Error("Could not get user's id");
   const favouritesArray = [...getState().chat.favourite];
-  let resultArray = [];
-  if (favouritesArray.includes(userId)) {
-    console.log(1);
-    resultArray = favouritesArray.filter((uid) => {
-      return uid !== userId;
-    });
-    console.log(favouritesArray);
-  } else {
-    resultArray.push(userId);
-  }
+  const resultArray = handleOtherAction(favouritesArray);
   await updateDoc(doc(db, "chats", getState().chat.id), {
     favourite: resultArray,
   });
   return resultArray;
 });
 
-export const editNickname = createAsyncThunk(
+export const editNickname = createAsyncThunk<
+  { newNickname: string; uid: string },
+  { newNickname: string; uid: string },
+  { state: { user: userStateType; chat: chatStateType } }
+>(
   "chat/editNickname",
-  async (data: { newNickname: string; uid: string }) => {
+  async (data: { newNickname: string; uid: string }, { getState }) => {
     console.log(data);
+    await updateDoc(doc(db, "chats", getState().chat.id), {
+      [`settings.nicknames.${data.uid}`]: data.newNickname,
+    });
+    return data;
   }
 );
 
@@ -202,4 +208,48 @@ export const changeChatTheme = createAsyncThunk<
   });
 
   return themeColors;
+});
+
+export const handleMute = createAsyncThunk<
+  any,
+  any,
+  { state: { user: userStateType; chat: chatStateType } }
+>("chat/handleMute", async (_, { getState }) => {
+  const mutedArray = [...getState().chat.muted];
+  const resultArray = handleOtherAction(mutedArray);
+  await updateDoc(doc(db, "chats", getState().chat.id), {
+    muted: resultArray,
+  });
+  return resultArray;
+});
+
+export const handleBlock = createAsyncThunk<
+  any,
+  any,
+  { state: { user: userStateType; chat: chatStateType } }
+>("chat/handleBlock", async (_, { getState }) => {
+  const blockedArray = [...getState().chat.blocked];
+  const resultArray = handleOtherAction(blockedArray);
+  await updateDoc(doc(db, "chats", getState().chat.id), {
+    blocked: resultArray,
+    favourite: [],
+  });
+  return resultArray;
+});
+
+export const handleDelete = createAsyncThunk<
+  any,
+  any,
+  { state: { user: userStateType; chat: chatStateType } }
+>("chat/handleDelete", async (_, { getState }) => {
+  const trashArray = [...getState().chat.trash];
+  const resultArray = handleOtherAction(trashArray);
+  const filteredFavourite = getState().chat.favourite.filter(
+    (userId) => userId !== auth.currentUser?.uid
+  );
+  await updateDoc(doc(db, "chats", getState().chat.id), {
+    trash: resultArray,
+    favourite: filteredFavourite,
+  });
+  return { resultArray, filteredFavourite };
 });

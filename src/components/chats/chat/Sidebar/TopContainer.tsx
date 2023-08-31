@@ -5,13 +5,19 @@ import { ReactComponent as Plus } from "../../../../assets/plus.svg";
 import { ReactComponent as Star } from "../../../../assets/star.svg";
 import { ReactComponent as Unblock } from "../../../../assets/unblock.svg";
 import { ReactComponent as Restore } from "../../../../assets/restore.svg";
+import { ReactComponent as Trash } from "../../../../assets/trash.svg";
+
 import Modal from "../../../modals/Modal";
 import AddEventModal from "../../../modals/AddEventModal";
 
 import styles from "./TopContainer.module.css";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../../../hooks/reduxHooks";
-import { handleFavourite } from "../../../../redux/chatActions";
+import {
+  handleBlock,
+  handleDelete,
+  handleFavourite,
+} from "../../../../redux/chatActions";
 import { auth } from "../../../../services/firebase";
 
 const TopContainer = (props: { toggleSearchInput: () => void }) => {
@@ -21,14 +27,19 @@ const TopContainer = (props: { toggleSearchInput: () => void }) => {
   const { pathname } = useLocation();
   const navigate = useNavigate();
 
-  useEffect(() => {
-    if (!auth.currentUser) return;
-    if (
-      pathname.includes("favourites") &&
-      !chatState.favourite.includes(auth.currentUser?.uid)
-    )
+  const onFavourite = () => {
+    dispatch(handleFavourite({})).then((action) => {
+      if (auth.currentUser && !action.payload.includes[auth.currentUser.uid]) {
+        navigate(`/chats/all/${chatState.id}`, { replace: true });
+      }
+    });
+  };
+
+  const onRestore = () => {
+    dispatch(handleDelete({})).then(() => {
       navigate(`/chats/all/${chatState.id}`, { replace: true });
-  }, [chatState.favourite]);
+    });
+  };
 
   return (
     <div className={styles.topContainer}>
@@ -85,10 +96,7 @@ const TopContainer = (props: { toggleSearchInput: () => void }) => {
                 <AddEventModal />
               </Modal>
               <div className={styles.actionContainer}>
-                <div
-                  className={styles.iconContainer}
-                  onClick={() => dispatch(handleFavourite({}))}
-                >
+                <div className={styles.iconContainer} onClick={onFavourite}>
                   <Star
                     style={{
                       fill:
@@ -108,21 +116,38 @@ const TopContainer = (props: { toggleSearchInput: () => void }) => {
               </div>
             </>
           )}
-        {pathname.includes("blocked") && (
-          <div className={styles.actionContainer}>
-            <div className={styles.iconContainer}>
-              <Unblock />
+        {pathname.includes("blocked") &&
+          auth.currentUser &&
+          chatState.blocked.includes(auth.currentUser.uid) && (
+            <div className={styles.actionContainer}>
+              <div
+                className={styles.iconContainer}
+                onClick={() => {
+                  dispatch(handleBlock({})).then(() => {
+                    navigate(`/chats/all/${chatState.id}`, { replace: true });
+                  });
+                }}
+              >
+                <Unblock />
+              </div>
+              <p>Unblock</p>
             </div>
-            <p>Unblock</p>
-          </div>
-        )}
+          )}
         {pathname.includes("trash") && (
-          <div className={styles.actionContainer}>
-            <div className={styles.iconContainer}>
-              <Restore />
+          <>
+            <div className={styles.actionContainer}>
+              <div className={styles.iconContainer} onClick={onRestore}>
+                <Restore />
+              </div>
+              <p>Restore</p>
             </div>
-            <p>Restore</p>
-          </div>
+            <div className={styles.actionContainer}>
+              <div className={styles.iconContainer} onClick={onRestore}>
+                <Trash />
+              </div>
+              <p>Delete permanently</p>
+            </div>
+          </>
         )}
       </div>
     </div>

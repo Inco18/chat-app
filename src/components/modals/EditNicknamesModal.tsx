@@ -1,11 +1,10 @@
 import React, { useRef, useState } from "react";
-import defaultImg from "../../assets/default.jpg";
 import { ReactComponent as Edit } from "../../assets/edit.svg";
 import { ReactComponent as Check } from "../../assets/check.svg";
+import { ReactComponent as SmallSpinner } from "../../assets/spinner.svg";
 
 import styles from "./EditNicknamesModal.module.css";
 import { useAppDispatch, useAppSelector } from "../../hooks/reduxHooks";
-import { userStateType } from "../../redux/userSlice";
 import { editNickname } from "../../redux/chatActions";
 
 const EditNicknamesModal = () => {
@@ -13,10 +12,10 @@ const EditNicknamesModal = () => {
     undefined
   );
   const chatState = useAppSelector((state) => state.chat);
+  const isLoading = chatState.status === "editingNickname";
   const dispatch = useAppDispatch();
   const inputRef = useRef<HTMLInputElement>(null);
 
-  //TODO:
   const handleSubmit = (
     e: React.FormEvent,
     user: (typeof chatState.users)[0]
@@ -27,12 +26,15 @@ const EditNicknamesModal = () => {
       setInputOnPerson(undefined);
       return;
     }
-    dispatch(editNickname({ newNickname, uid: user.uid }));
+    dispatch(editNickname({ newNickname, uid: user.uid })).then(() =>
+      setInputOnPerson(undefined)
+    );
   };
 
   return (
     <ul className={styles.container}>
       {chatState.users.map((user) => {
+        const userNickname: string = chatState.settings.nicknames[user.uid];
         return (
           <li
             className={styles.person}
@@ -52,7 +54,9 @@ const EditNicknamesModal = () => {
             {inputOnPerson !== user.uid && (
               <>
                 <p className={styles.name}>
-                  {user.firstName} {user.lastName}
+                  {userNickname
+                    ? userNickname
+                    : `${user.firstName} ${user.lastName}`}
                 </p>
                 <Edit className={styles.editImg} />
               </>
@@ -65,13 +69,29 @@ const EditNicknamesModal = () => {
                 >
                   <input
                     type="text"
-                    placeholder={user.firstName + " " + user.lastName}
+                    placeholder={
+                      userNickname
+                        ? userNickname
+                        : `${user.firstName} ${user.lastName}`
+                    }
                     className={styles.input}
                     autoFocus
                     ref={inputRef}
                   />
-                  <button type="submit" className={styles.submitBtn}>
-                    <Check className={`${styles.editImg} ${styles.checkImg}`} />
+                  <button
+                    type="submit"
+                    className={styles.submitBtn}
+                    disabled={isLoading}
+                  >
+                    {!isLoading ? (
+                      <Check
+                        className={`${styles.editImg} ${styles.checkImg}`}
+                      />
+                    ) : (
+                      <SmallSpinner
+                        className={`${styles.editImg} ${styles.checkImg}`}
+                      />
+                    )}
                   </button>
                 </form>
               </>
@@ -79,66 +99,6 @@ const EditNicknamesModal = () => {
           </li>
         );
       })}
-      {/* <li
-        className={styles.person}
-        tabIndex={0}
-        id="1"
-        onClick={handlePersonClick}
-      >
-        <img src={defaultImg} />
-        {inputOnPerson !== "1" && (
-          <>
-            <p className={styles.name}>Jan Kowalski</p>
-            <Edit className={styles.editImg} />
-          </>
-        )}
-        {inputOnPerson === "1" && (
-          <>
-            <form className={styles.form} onSubmit={handleSubmit}>
-              <input
-                type="text"
-                placeholder={"Jan Kowalski"}
-                className={styles.input}
-                autoFocus
-              />
-              <Check
-                className={`${styles.editImg} ${styles.checkImg}`}
-                onClick={handleSubmit}
-              />
-            </form>
-          </>
-        )}
-      </li>
-      <li
-        className={styles.person}
-        tabIndex={0}
-        id="2"
-        onClick={handlePersonClick}
-      >
-        <img src={defaultImg} />
-        {inputOnPerson !== "2" && (
-          <>
-            <p className={styles.name}>John Paul</p>
-            <Edit className={styles.editImg} />
-          </>
-        )}
-        {inputOnPerson === "2" && (
-          <>
-            <form className={styles.form} onSubmit={handleSubmit}>
-              <input
-                type="text"
-                placeholder={"John Paul"}
-                className={styles.input}
-                autoFocus
-              />
-              <Check
-                className={`${styles.editImg} ${styles.checkImg}`}
-                onClick={handleSubmit}
-              />
-            </form>
-          </>
-        )}
-      </li> */}
     </ul>
   );
 };

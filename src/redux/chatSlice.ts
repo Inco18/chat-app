@@ -3,7 +3,11 @@ import {
   changeChatTheme,
   createChat,
   createGroupChat,
+  editNickname,
+  handleBlock,
+  handleDelete,
   handleFavourite,
+  handleMute,
   openChatWithClick,
   openChatWithId,
 } from "./chatActions";
@@ -14,8 +18,10 @@ export type chatStateType = {
   id: string;
   messages: { sentAt: Date; sentBy: string; type: string; value: string }[];
   favourite: string[];
+  muted: string[];
   blocked: string[];
   archived: boolean;
+  trash: string[];
   users: {
     firstName: string;
     lastName: string;
@@ -29,7 +35,7 @@ export type chatStateType = {
     themeColor: string;
     themeColorLight: string;
     themeColorLightHover: string;
-    nicknames: { uid: string; nickname: string }[];
+    nicknames: { [key: string]: string };
   };
 };
 
@@ -38,7 +44,9 @@ export const initialState: chatStateType = {
   id: "",
   messages: [],
   favourite: [],
+  muted: [],
   blocked: [],
+  trash: [],
   archived: false,
   users: [],
   title: "",
@@ -47,7 +55,7 @@ export const initialState: chatStateType = {
     themeColor: "",
     themeColorLight: "",
     themeColorLightHover: "",
-    nicknames: [],
+    nicknames: {},
   },
 };
 
@@ -116,6 +124,21 @@ const chatSlice = createSlice({
         state.status = "error";
         toast.error("Could not add to favourites: " + action.error.message);
       })
+      .addCase(editNickname.pending, (state) => {
+        state.status = "editingNickname";
+      })
+      .addCase(editNickname.fulfilled, (state, action) => {
+        state.settings.nicknames = {
+          ...state.settings.nicknames,
+          [action.payload.uid]: action.payload.newNickname,
+        };
+        state.status = "idle";
+        toast.success("Nickname changed successfully");
+      })
+      .addCase(editNickname.rejected, (state, action) => {
+        state.status = "error";
+        toast.error("Could not add to favourites: " + action.error.message);
+      })
       .addCase(changeChatTheme.pending, (state) => {
         state.status = "changingTheme";
       })
@@ -129,6 +152,41 @@ const chatSlice = createSlice({
       .addCase(changeChatTheme.rejected, (state, action) => {
         state.status = "error";
         toast.error("Could not change theme: " + action.error.message);
+      })
+      .addCase(handleMute.pending, (state) => {
+        state.status = "handlingMute";
+      })
+      .addCase(handleMute.fulfilled, (state, action) => {
+        state.muted = action.payload;
+        state.status = "idle";
+      })
+      .addCase(handleMute.rejected, (state, action) => {
+        state.status = "error";
+        toast.error("Could not mute: " + action.error.message);
+      })
+      .addCase(handleBlock.pending, (state) => {
+        state.status = "handlingBlock";
+      })
+      .addCase(handleBlock.fulfilled, (state, action) => {
+        state.blocked = action.payload;
+        state.favourite = [];
+        state.status = "idle";
+      })
+      .addCase(handleBlock.rejected, (state, action) => {
+        state.status = "error";
+        toast.error("Could not block: " + action.error.message);
+      })
+      .addCase(handleDelete.pending, (state) => {
+        state.status = "handlingDelete";
+      })
+      .addCase(handleDelete.fulfilled, (state, action) => {
+        state.trash = action.payload.resultArray;
+        state.favourite = action.payload.filteredFavourite;
+        state.status = "idle";
+      })
+      .addCase(handleDelete.rejected, (state, action) => {
+        state.status = "error";
+        toast.error("Could not move to trash: " + action.error.message);
       });
   },
 });

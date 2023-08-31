@@ -38,6 +38,7 @@ const ChangeThemeModal = () => {
             onClick={() => {
               dispatch(changeChatTheme(color));
             }}
+            key={color[0]}
           >
             <div
               className={styles.themeColor}

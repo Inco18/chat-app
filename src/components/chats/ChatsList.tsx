@@ -120,7 +120,7 @@ const ChatsList = () => {
               lastMsg: chatData.lastMsg.value
                 ? {
                     ...chatData.lastMsg,
-                    timestamp: chatData.lastMsg.timestamp.toDate(),
+                    timestamp: chatData.lastMsg.timestamp.toDate().toString(),
                   }
                 : {},
             };
@@ -139,7 +139,7 @@ const ChatsList = () => {
     const filtered = list.filter((chat) => {
       if (matches[2].pathname.includes("chats/all"))
         return (
-          !chat.blocked.includes(auth.currentUser?.uid) &&
+          chat.blocked.length === 0 &&
           !chat.archived &&
           !chat.trash.includes(auth.currentUser?.uid) &&
           ((chat.userInfo &&
@@ -152,7 +152,7 @@ const ChatsList = () => {
         return chat.favourite.includes(auth.currentUser?.uid);
       if (matches[2].pathname.includes("chats/archived")) return chat.archived;
       if (matches[2].pathname.includes("chats/blocked"))
-        return chat.blocked.includes(auth.currentUser?.uid);
+        return chat.blocked.length > 0;
       if (matches[2].pathname.includes("chats/trash"))
         return chat.trash.includes(auth.currentUser?.uid);
     });
@@ -160,13 +160,17 @@ const ChatsList = () => {
     setFilteredList(filtered);
   }, [list, matches[2].pathname, search]);
 
-  useEffect(() => {
-    if (chatState.status === "idle" && chatState.id) {
-      navigate(`/chats/all/${chatState.id}`);
-      setSearch("");
-      setGroupModalIsOpen(false);
-    }
-  }, [chatState.id, chatState.status]);
+  const afterChatCreate = (action: any) => {
+    navigate(`/chats/all/${action.payload.id}`);
+    setSearch("");
+    setGroupModalIsOpen(false);
+  };
+
+  const onChatCreate = (user: any) => {
+    dispatch(createChat(user)).then((action) => {
+      afterChatCreate(action);
+    });
+  };
 
   return (
     <div className={`${styles.listContainer} ${thinList ? styles.thin : ""}`}>
@@ -210,7 +214,7 @@ const ChatsList = () => {
         closeFunction={() => setGroupModalIsOpen(false)}
         title={"Create a group chat"}
       >
-        <GroupChatModal />
+        <GroupChatModal afterChatCreate={afterChatCreate} />
       </Modal>
       <div className={styles.chatsOuter} id="scrollableDiv">
         <div className={styles.chatsInner}>
@@ -284,7 +288,7 @@ const ChatsList = () => {
                 className={styles["navlink"]}
                 title={`${user.firstName} ${user.lastName}`}
                 key={user.id}
-                onClick={() => dispatch(createChat(user))}
+                onClick={() => onChatCreate(user)}
               >
                 <img
                   src={

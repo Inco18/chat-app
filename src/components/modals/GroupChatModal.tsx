@@ -13,7 +13,7 @@ import { db, auth } from "../../services/firebase";
 import { useAppDispatch, useAppSelector } from "../../hooks/reduxHooks";
 import { createGroupChat } from "../../redux/chatActions";
 
-const GroupChatModal = () => {
+const GroupChatModal = (props: { afterChatCreate: (action: any) => void }) => {
   const [image, setImage] = useState<File>();
   const [imgScale, setImgScale] = useState<number>(1);
   const [imgRotation, setImgRotation] = useState<number>(0);
@@ -73,7 +73,9 @@ const GroupChatModal = () => {
               users: usersList,
               imgBlob: blob,
             })
-          );
+          ).then((action) => {
+            props.afterChatCreate(action);
+          });
         },
         "image/jpeg",
         1
@@ -84,7 +86,9 @@ const GroupChatModal = () => {
           title: data.title,
           users: usersList,
         })
-      );
+      ).then((action) => {
+        props.afterChatCreate(action);
+      });
     }
   };
 
