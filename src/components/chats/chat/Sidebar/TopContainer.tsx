@@ -17,6 +17,7 @@ import {
   handleBlock,
   handleDelete,
   handleFavourite,
+  handlePermDelete,
 } from "../../../../redux/chatActions";
 import { auth } from "../../../../services/firebase";
 
@@ -37,7 +38,18 @@ const TopContainer = (props: { toggleSearchInput: () => void }) => {
 
   const onRestore = () => {
     dispatch(handleDelete({})).then(() => {
+      chatState.blocked.length > 0
+        ? navigate(`/chats/blocked/${chatState.id}`, { replace: true })
+        : chatState.archived
+        ? navigate(`/chats/archived/${chatState.id}`, { replace: true })
+        : navigate(`/chats/all/${chatState.id}`, { replace: true });
       navigate(`/chats/all/${chatState.id}`, { replace: true });
+    });
+  };
+
+  const onPermDelete = () => {
+    dispatch(handlePermDelete({})).then(() => {
+      navigate("/chats/all", { replace: true });
     });
   };
 
@@ -50,9 +62,9 @@ const TopContainer = (props: { toggleSearchInput: () => void }) => {
               ? chatState.chatImgUrl
                 ? chatState.chatImgUrl
                 : "/defaultGroup.webp"
-              : chatState.users[1].avatarUrl
+              : chatState.users[1] && chatState.users[1].avatarUrl
               ? chatState.users[1].avatarUrl
-              : chatState.users[1].sex === "female"
+              : chatState.users[1] && chatState.users[1].sex === "female"
               ? "/defaultFemale.webp"
               : "/defaultMale.webp"
           }
@@ -61,7 +73,9 @@ const TopContainer = (props: { toggleSearchInput: () => void }) => {
           <p>{chatState.title}</p>
         ) : (
           <p>
-            {chatState.users[1].firstName} {chatState.users[1].lastName}
+            {chatState.users[1]
+              ? `${chatState.users[1].firstName} ${chatState.users[1].lastName}`
+              : "Unknown user"}
           </p>
         )}
       </div>
@@ -93,7 +107,7 @@ const TopContainer = (props: { toggleSearchInput: () => void }) => {
                 closeFunction={() => setAddEventModalOpen((prev) => !prev)}
                 title={"Add new event"}
               >
-                <AddEventModal />
+                <AddEventModal closeFn={() => setAddEventModalOpen(false)} />
               </Modal>
               <div className={styles.actionContainer}>
                 <div className={styles.iconContainer} onClick={onFavourite}>
@@ -141,8 +155,12 @@ const TopContainer = (props: { toggleSearchInput: () => void }) => {
               </div>
               <p>Restore</p>
             </div>
+          </>
+        )}
+        {(pathname.includes("trash") || pathname.includes("archived")) && (
+          <>
             <div className={styles.actionContainer}>
-              <div className={styles.iconContainer} onClick={onRestore}>
+              <div className={styles.iconContainer} onClick={onPermDelete}>
                 <Trash />
               </div>
               <p>Delete permanently</p>

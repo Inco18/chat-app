@@ -3,8 +3,10 @@ import {
   Timestamp,
   addDoc,
   collection,
+  deleteDoc,
   doc,
   getDoc,
+  serverTimestamp,
   setDoc,
   updateDoc,
 } from "firebase/firestore";
@@ -22,6 +24,7 @@ export const createChat = createAsyncThunk<
   console.log(userData);
   const currentUser = thunkApi.getState().user;
   const dbObject = {
+    events: [],
     archived: false,
     blocked: [],
     muted: [],
@@ -40,12 +43,12 @@ export const createChat = createAsyncThunk<
   };
   const docRef = await addDoc(collection(db, "chats"), dbObject);
   await setDoc(doc(db, "messages", docRef.id), {});
-  await addDoc(collection(db, "messages", docRef.id, "messages"), {
-    type: "initial",
-    value: "",
-    sentAt: Timestamp.fromDate(new Date()),
-    sentBy: "",
-  });
+  // await addDoc(collection(db, "messages", docRef.id, "messages"), {
+  //   type: "initial",
+  //   value: "",
+  //   sentAt: Timestamp.fromDate(new Date()),
+  //   sentBy: "",
+  // });
 
   return {
     ...dbObject,
@@ -78,6 +81,7 @@ export const createGroupChat = createAsyncThunk<
   const currentUser = thunkApi.getState().user;
   console.log(chatData);
   const dbObject = {
+    events: [],
     archived: false,
     blocked: [],
     muted: [],
@@ -109,12 +113,12 @@ export const createGroupChat = createAsyncThunk<
   console.log(dbObject);
   await setDoc(newChatRef, dbObject);
   await setDoc(doc(db, "messages", newChatRef.id), {});
-  await addDoc(collection(db, "messages", newChatRef.id, "messages"), {
-    type: "initial",
-    value: "",
-    sentAt: Timestamp.fromDate(new Date()),
-    sentBy: "",
-  });
+  // await addDoc(collection(db, "messages", newChatRef.id, "messages"), {
+  //   type: "initial",
+  //   value: "",
+  //   sentAt: Timestamp.fromDate(new Date()),
+  //   sentBy: "",
+  // });
 
   return {
     ...dbObject,
@@ -148,7 +152,14 @@ export const openChatWithClick = createAsyncThunk<
 >("chat/openChatWithClick", async (chatData: any, thunkApi) => {
   const currentUser = thunkApi.getState().user;
   const newUsers = await loadChatUsers(chatData, currentUser);
-  return { ...chatData, users: newUsers };
+  return {
+    ...chatData,
+    users: newUsers,
+    lastMsg: {
+      ...chatData.lastMsg,
+      timestamp: chatData.lastMsg.timestamp ? chatData.lastMsg.timestamp : "",
+    },
+  };
 });
 
 export const openChatWithId = createAsyncThunk<
@@ -161,7 +172,17 @@ export const openChatWithId = createAsyncThunk<
   if (chatSnapshot.exists()) {
     const chatData = chatSnapshot.data();
     const newUsers = await loadChatUsers(chatData, currentUser);
-    return { ...chatData, users: newUsers, id: chatId };
+    return {
+      ...chatData,
+      users: newUsers,
+      id: chatId,
+      lastMsg: {
+        ...chatData.lastMsg,
+        timestamp: chatData.lastMsg.timestamp
+          ? chatData.lastMsg.timestamp.toDate().toString()
+          : "",
+      },
+    };
   } else {
     throw new Error("This chat doesn't exist");
   }
@@ -253,3 +274,68 @@ export const handleDelete = createAsyncThunk<
   });
   return { resultArray, filteredFavourite };
 });
+
+export const handlePermDelete = createAsyncThunk<
+  any,
+  any,
+  { state: { user: userStateType; chat: chatStateType } }
+>("chat/handlePermDelete", async (_, { getState }) => {
+  const userId = auth.currentUser?.uid;
+  const usersArray = getState().chat.users;
+  const newUsersArray = usersArray.filter((user) => user.uid !== userId);
+  if (!getState().chat.archived) {
+    const willBeArchived = getState().chat.title === "" ? true : false;
+    const newDbUsers = newUsersArray.map((user) => user.uid);
+    const newTrash = getState().chat.trash.filter((uid) => uid !== userId);
+    await updateDoc(doc(db, "chats", getState().chat.id), {
+      archived: willBeArchived,
+      users: newDbUsers,
+      trash: newTrash,
+    });
+  } else {
+    await deleteDoc(doc(db, "chats", getState().chat.id));
+  }
+});
+
+export const sendMessage = createAsyncThunk<
+  any,
+  any,
+  { state: { user: userStateType; chat: chatStateType } }
+>(
+  "chat/sendMessage",
+  async (
+    message: { text: string; files: File[]; gifUrl: string },
+    { getState }
+  ) => {
+    console.log(message);
+    const dbMessage = {
+      filesUrls: <string[]>[],
+      sentBy: auth.currentUser?.uid,
+      text: message.text,
+      timestamp: serverTimestamp(),
+      gifUrl: message.gifUrl,
+    };
+
+    if (message.files.length > 0) {
+      const urlArr: string[] = await Promise.all(
+        message.files.map(async (file) => {
+          const storageRef = ref(
+            storage,
+            `chats/${getState().chat.id}/${file.name}`
+          );
+          const res = await uploadBytes(storageRef, file);
+          const url = await getDownloadURL(res.ref);
+          return url;
+        })
+      );
+      dbMessage.filesUrls = urlArr;
+    }
+
+    await addDoc(
+      collection(db, "messages", getState().chat.id, "messages"),
+      dbMessage
+    );
+
+    return { ...dbMessage, timestamp: new Date().toString() };
+  }
+);

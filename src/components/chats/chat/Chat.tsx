@@ -55,9 +55,9 @@ const Chat = () => {
                     ? chatState.chatImgUrl
                       ? chatState.chatImgUrl
                       : "/defaultGroup.webp"
-                    : chatState.users[1].avatarUrl
+                    : chatState.users[1] && chatState.users[1].avatarUrl
                     ? chatState.users[1].avatarUrl
-                    : chatState.users[1].sex === "female"
+                    : chatState.users[1] && chatState.users[1].sex === "female"
                     ? "/defaultFemale.webp"
                     : "/defaultMale.webp"
                 }
@@ -72,8 +72,10 @@ const Chat = () => {
                   <>
                     <span>Conversation with</span>{" "}
                     <span className={styles.bold}>
-                      {chatState.users[1].firstName}{" "}
-                      {chatState.users[1].lastName}
+                      {chatState.users[1]
+                        ? `${chatState.users[1].firstName}
+                      ${chatState.users[1].lastName}`
+                        : "Unknown user"}
                     </span>
                   </>
                 )}

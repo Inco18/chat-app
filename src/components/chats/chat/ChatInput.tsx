@@ -12,6 +12,7 @@ import { ReactComponent as Gif } from "../../../assets/gif.svg";
 import { ReactComponent as Send } from "../../../assets/send.svg";
 import { ReactComponent as File } from "../../../assets/file.svg";
 import { ReactComponent as Remove } from "../../../assets/remove.svg";
+import { ReactComponent as SmallSpinner } from "../../../assets/spinner.svg";
 
 import styles from "./ChatInput.module.css";
 import ReactTextareaAutosize from "react-textarea-autosize";
@@ -21,6 +22,8 @@ import { EmojiClickData } from "emoji-picker-react/dist/types/exposedTypes";
 import { ThemeContext } from "../../../context/theme-context";
 import useOutsideClick from "../../../hooks/useOutsideClick";
 import GifPicker, { TenorImage } from "gif-picker-react";
+import { useAppDispatch, useAppSelector } from "../../../hooks/reduxHooks";
+import { sendMessage } from "../../../redux/chatActions";
 
 const errorClassnames = {
   enter: styles.errorEnter,
@@ -48,9 +51,12 @@ const ChatInput = () => {
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const emojiPickerContainerRef = useRef<HTMLDivElement>(null);
-  const smileImgRef = useRef<HTMLDivElement>(null);
+  const smileImgRef = useRef<HTMLButtonElement>(null);
   const gifPickerContainerRef = useRef<HTMLDivElement>(null);
-  const gifImgRef = useRef<HTMLDivElement>(null);
+  const gifImgRef = useRef<HTMLButtonElement>(null);
+  const dispatch = useAppDispatch();
+  const chatState = useAppSelector((state) => state.chat);
+  const isSending = chatState.status === "sendingMessage";
 
   const themeCtx = useContext(ThemeContext);
 
@@ -169,15 +175,24 @@ const ChatInput = () => {
     }
   };
 
-  // TODO:
   const handleSubmit = () => {
-    console.log("Submiting");
+    if (!inputRef.current?.value) return;
+    dispatch(
+      sendMessage({
+        text: inputRef.current?.value,
+        files: filesToSend,
+        gifUrl: "",
+      })
+    ).then(() => {
+      inputRef.current ? (inputRef.current.value = "") : "";
+      setFilesToSend([]);
+    });
   };
 
-  // TODO:
   const handleGifClick = (tenorImage: TenorImage) => {
-    setGifPickerVisible(false);
-    console.log(tenorImage);
+    dispatch(sendMessage({ text: "", files: [], gifUrl: tenorImage.url })).then(
+      () => setGifPickerVisible(false)
+    );
   };
 
   return (
@@ -318,27 +333,40 @@ const ChatInput = () => {
         />
 
         <div className={styles.imagesContainer}>
-          <div
+          <button
             className={styles.inputImg}
             ref={smileImgRef}
             onClick={() => setEmojiPickerVisible((prev) => !prev)}
           >
             <Smile className={styles.inputImg} />
-          </div>
-          <Attach
-            className={styles.inputImg}
-            onClick={() => fileInputRef.current?.click()}
-          />
-          <div
+          </button>
+          <button className={styles.inputImg}>
+            <Attach
+              className={styles.inputImg}
+              onClick={() => fileInputRef.current?.click()}
+            />
+          </button>
+          <button
             className={styles.inputImg}
             ref={gifImgRef}
             onClick={() => setGifPickerVisible((prev) => !prev)}
           >
             <Gif className={styles.inputImg} />
-          </div>
-          <div className={styles.sendContainer} onClick={handleSubmit}>
-            <Send className={styles.inputImg} />
-          </div>
+          </button>
+          <button
+            className={styles.sendContainer}
+            onClick={handleSubmit}
+            disabled={isSending}
+          >
+            {isSending ? (
+              <SmallSpinner
+                className={styles.inputImg}
+                style={{ color: "black", padding: ".2rem" }}
+              />
+            ) : (
+              <Send className={styles.inputImg} />
+            )}
+          </button>
         </div>
       </div>
     </div>

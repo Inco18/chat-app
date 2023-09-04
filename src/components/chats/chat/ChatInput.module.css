@@ -99,6 +99,7 @@
   gap: 0.5rem;
   align-items: center;
   position: relative;
+  margin-top: auto;
 }
 
 .inputImg {
@@ -106,6 +107,10 @@
   height: 1.7rem;
   cursor: pointer;
   transition: opacity 0.1s;
+  border: 0;
+  outline: 0;
+  background-color: transparent;
+  padding: 0;
 }
 
 .inputImg:hover {
@@ -120,12 +125,19 @@
   border-radius: 0.7rem;
   padding: 0.2rem;
   cursor: pointer;
+  border: 0;
 }
 
 .sendContainer .inputImg {
   width: 1.7rem;
   height: 1.7rem;
   opacity: 1;
+}
+
+.sendContainer:disabled,
+.sendContainer:disabled * {
+  opacity: 0.7;
+  cursor: not-allowed;
 }
 
 .dropDiv {

@@ -104,18 +104,24 @@ const ChatsList = () => {
             const otherUserId = chatData.users.filter(
               (id: string) => id !== auth.currentUser?.uid
             )[0];
-            const userDocRef = doc(db, "users", otherUserId);
-            const userDocSnap = await getDoc(userDocRef);
-
-            return {
-              id: chatDocSnap.id,
-              userInfo: {
+            let userInfo;
+            if (!otherUserId) {
+              userInfo = {};
+            } else {
+              const userDocRef = doc(db, "users", otherUserId);
+              const userDocSnap = await getDoc(userDocRef);
+              userInfo = {
                 uid: otherUserId,
                 avatarUrl: userDocSnap.data()?.avatarUrl,
                 firstName: userDocSnap.data()?.firstName,
                 lastName: userDocSnap.data()?.lastName,
                 sex: userDocSnap.data()?.sex,
-              },
+              };
+            }
+
+            return {
+              id: chatDocSnap.id,
+              userInfo: userInfo,
               ...chatData,
               lastMsg: chatData.lastMsg.value
                 ? {
@@ -271,7 +277,9 @@ const ChatsList = () => {
                   <p className={styles.name}>
                     {chat.title
                       ? chat.title
-                      : `${chat.userInfo.firstName} ${chat.userInfo.lastName}`}
+                      : chat.userInfo.firstName
+                      ? `${chat.userInfo.firstName} ${chat.userInfo.lastName}`
+                      : "Unknown user"}
                   </p>
                   <p className={styles.lastMsg}>{chat.lastMsg.value}</p>
                 </div>

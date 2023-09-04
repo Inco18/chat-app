@@ -8,8 +8,10 @@ import {
   handleDelete,
   handleFavourite,
   handleMute,
+  handlePermDelete,
   openChatWithClick,
   openChatWithId,
+  sendMessage,
 } from "./chatActions";
 import { toast } from "react-toastify";
 
@@ -70,7 +72,7 @@ const chatSlice = createSlice({
       })
       .addCase(createChat.fulfilled, (state, action) => {
         toast.success("Chat created successfully");
-        return { ...action.payload, status: "idle" };
+        return { ...action.payload, status: "idle", messages: [] };
       })
       .addCase(createChat.rejected, (state, action) => {
         state.status = "error";
@@ -81,7 +83,7 @@ const chatSlice = createSlice({
       })
       .addCase(createGroupChat.fulfilled, (state, action) => {
         toast.success("Group chat created successfully");
-        return { ...action.payload, status: "idle" };
+        return { ...action.payload, status: "idle", messages: [] };
       })
       .addCase(createGroupChat.rejected, (state, action) => {
         state.status = "error";
@@ -94,6 +96,7 @@ const chatSlice = createSlice({
         return {
           ...action.payload,
           status: "idle",
+          messages: [],
         };
       })
       .addCase(openChatWithClick.rejected, (state, action) => {
@@ -106,6 +109,7 @@ const chatSlice = createSlice({
       .addCase(openChatWithId.fulfilled, (state, action) => {
         return {
           ...action.payload,
+          messages: [],
           status: "idle",
         };
       })
@@ -187,6 +191,28 @@ const chatSlice = createSlice({
       .addCase(handleDelete.rejected, (state, action) => {
         state.status = "error";
         toast.error("Could not move to trash: " + action.error.message);
+      })
+      .addCase(handlePermDelete.pending, (state) => {
+        state.status = "handlingPermDelete";
+      })
+      .addCase(handlePermDelete.fulfilled, (state, action) => {
+        toast.success("Chat deleted permanently");
+        return { ...initialState, status: "idle" };
+      })
+      .addCase(handlePermDelete.rejected, (state, action) => {
+        state.status = "error";
+        toast.error("Could not delete: " + action.error.message);
+      })
+      .addCase(sendMessage.pending, (state) => {
+        state.status = "sendingMessage";
+      })
+      .addCase(sendMessage.fulfilled, (state, action) => {
+        state.messages.push(action.payload);
+        state.status = "idle";
+      })
+      .addCase(sendMessage.rejected, (state, action) => {
+        state.status = "error";
+        toast.error("Could not delete: " + action.error.message);
       });
   },
 });
