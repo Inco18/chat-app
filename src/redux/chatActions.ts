@@ -6,8 +6,13 @@ import {
   deleteDoc,
   doc,
   getDoc,
+  getDocs,
+  limit,
+  orderBy,
+  query,
   serverTimestamp,
   setDoc,
+  startAfter,
   updateDoc,
 } from "firebase/firestore";
 import { auth, db, storage } from "../services/firebase";
@@ -308,12 +313,20 @@ export const sendMessage = createAsyncThunk<
     { getState }
   ) => {
     console.log(message);
+    const uid = auth.currentUser?.uid;
     const dbMessage = {
       filesUrls: <string[]>[],
-      sentBy: auth.currentUser?.uid,
+      sentBy: uid,
       text: message.text,
       timestamp: serverTimestamp(),
       gifUrl: message.gifUrl,
+    };
+
+    const dbLastMsg = {
+      sentBy: uid,
+      readBy: [uid],
+      timestamp: serverTimestamp(),
+      value: `${message.text}`,
     };
 
     if (message.files.length > 0) {
@@ -329,13 +342,46 @@ export const sendMessage = createAsyncThunk<
         })
       );
       dbMessage.filesUrls = urlArr;
+      if (!message.text && message.files.length === 1) {
+        dbLastMsg.value = "sent a file";
+      } else if (!message.text && message.files.length > 1)
+        dbLastMsg.value = "sent files";
     }
 
     await addDoc(
       collection(db, "messages", getState().chat.id, "messages"),
       dbMessage
     );
+    await updateDoc(doc(db, "chats", getState().chat.id), {
+      lastMsg: dbLastMsg,
+    });
 
     return { ...dbMessage, timestamp: new Date().toString() };
   }
 );
+
+export const loadMoreMsg = createAsyncThunk<
+  any,
+  any,
+  { state: { user: userStateType; chat: chatStateType } }
+>("chat/loadMoreMsg", async (_, { getState }) => {
+  console.log(getState().chat.messages[0].timestamp);
+  const q = query(
+    collection(db, "messages", getState().chat.id, "messages"),
+    orderBy("timestamp", "desc"),
+    startAfter(
+      Timestamp.fromDate(new Date(getState().chat.messages[0].timestamp))
+    ),
+    limit(5)
+  );
+
+  const querySnapshot = await getDocs(q);
+  return querySnapshot.docs
+    .map((doc) => {
+      return {
+        ...doc.data(),
+        timestamp: doc.data().timestamp.toDate().toString(),
+      };
+    })
+    .reverse();
+});

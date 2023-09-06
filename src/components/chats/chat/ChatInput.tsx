@@ -176,7 +176,7 @@ const ChatInput = () => {
   };
 
   const handleSubmit = () => {
-    if (!inputRef.current?.value) return;
+    if (!inputRef.current?.value && filesToSend.length === 0) return;
     dispatch(
       sendMessage({
         text: inputRef.current?.value,

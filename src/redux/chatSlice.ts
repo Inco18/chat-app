@@ -9,6 +9,7 @@ import {
   handleFavourite,
   handleMute,
   handlePermDelete,
+  loadMoreMsg,
   openChatWithClick,
   openChatWithId,
   sendMessage,
@@ -18,7 +19,13 @@ import { toast } from "react-toastify";
 export type chatStateType = {
   status: string;
   id: string;
-  messages: { sentAt: Date; sentBy: string; type: string; value: string }[];
+  messages: {
+    timestamp: Date;
+    sentBy: string;
+    text: string;
+    gifUrl: string;
+    filesUrls: string[];
+  }[];
   favourite: string[];
   muted: string[];
   blocked: string[];
@@ -64,7 +71,11 @@ export const initialState: chatStateType = {
 const chatSlice = createSlice({
   name: "chat",
   initialState,
-  reducers: {},
+  reducers: {
+    receiveLastMsg(state, action) {
+      state.messages.push(action.payload);
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(createChat.pending, (state) => {
@@ -212,11 +223,22 @@ const chatSlice = createSlice({
       })
       .addCase(sendMessage.rejected, (state, action) => {
         state.status = "error";
-        toast.error("Could not delete: " + action.error.message);
+        toast.error("Could not send message: " + action.error.message);
+      })
+      .addCase(loadMoreMsg.pending, (state) => {
+        state.status = "loadingMessages";
+      })
+      .addCase(loadMoreMsg.fulfilled, (state, action) => {
+        state.messages.unshift(...action.payload);
+        state.status = "idle";
+      })
+      .addCase(loadMoreMsg.rejected, (state, action) => {
+        state.status = "error";
+        toast.error("Could not load messages: " + action.error.message);
       });
   },
 });
 
-export const {} = chatSlice.actions;
+export const { receiveLastMsg } = chatSlice.actions;
 
 export default chatSlice.reducer;

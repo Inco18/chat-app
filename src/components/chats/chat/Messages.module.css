@@ -8,6 +8,7 @@
   padding: 1rem;
   max-width: 60%;
   width: fit-content;
+  margin-bottom: 0.5rem;
 }
 
 .textMessage.other {
@@ -43,4 +44,10 @@
 .sentTime img {
   width: 1.5rem;
   border-radius: 100vw;
+}
+
+.spinner {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }

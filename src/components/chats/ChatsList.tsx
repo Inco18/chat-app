@@ -26,7 +26,12 @@ import styles from "./ChatsList.module.css";
 const ChatsList = () => {
   const [search, setSearch] = useState<string>("");
   const [thinList, setThinList] = useState<boolean>(false);
-  const [list, setList] = useState<any[]>([]);
+  const [list, _setList] = useState<any[]>([]);
+  const listStateRef = useRef<any[]>([]);
+  const setList = (data: any[]) => {
+    listStateRef.current = data;
+    _setList(data);
+  };
   const [filteredList, setFilteredList] = useState<any[]>([]);
   const [usersList, setUsersList] = useState<any[]>([]);
   const [isLoadingUsers, setIsLoadingUsers] = useState(true);
@@ -93,7 +98,7 @@ const ChatsList = () => {
   useEffect(() => {
     const unsub = onSnapshot(q, (querySnapshot) => {
       Promise.all(
-        querySnapshot.docs.map(async (chatDocSnap: any) => {
+        querySnapshot.docs.map(async (chatDocSnap: any, i: number) => {
           const chatData = chatDocSnap.data();
           if (chatData.title) {
             return {
@@ -108,22 +113,32 @@ const ChatsList = () => {
             if (!otherUserId) {
               userInfo = {};
             } else {
-              const userDocRef = doc(db, "users", otherUserId);
-              const userDocSnap = await getDoc(userDocRef);
-              userInfo = {
-                uid: otherUserId,
-                avatarUrl: userDocSnap.data()?.avatarUrl,
-                firstName: userDocSnap.data()?.firstName,
-                lastName: userDocSnap.data()?.lastName,
-                sex: userDocSnap.data()?.sex,
-              };
+              const changed = querySnapshot
+                .docChanges()
+                .filter((change) => change.newIndex === i)[0];
+              if (changed && changed.type === "added") {
+                console.log("fetching user");
+                const userDocRef = doc(db, "users", otherUserId);
+                const userDocSnap = await getDoc(userDocRef);
+                userInfo = {
+                  uid: otherUserId,
+                  avatarUrl: userDocSnap.data()?.avatarUrl,
+                  firstName: userDocSnap.data()?.firstName,
+                  lastName: userDocSnap.data()?.lastName,
+                  sex: userDocSnap.data()?.sex,
+                };
+              } else if (!changed || changed.type !== "added") {
+                userInfo = listStateRef.current.filter(
+                  (chat) => chat.userInfo && chat.userInfo.uid === otherUserId
+                )[0].userInfo;
+              }
             }
 
             return {
               id: chatDocSnap.id,
               userInfo: userInfo,
               ...chatData,
-              lastMsg: chatData.lastMsg.value
+              lastMsg: chatData.lastMsg.timestamp
                 ? {
                     ...chatData.lastMsg,
                     timestamp: chatData.lastMsg.timestamp.toDate().toString(),
@@ -222,7 +237,7 @@ const ChatsList = () => {
       >
         <GroupChatModal afterChatCreate={afterChatCreate} />
       </Modal>
-      <div className={styles.chatsOuter} id="scrollableDiv">
+      <div className={styles.chatsOuter}>
         <div className={styles.chatsInner}>
           {usersList.length > 0 && filteredList.length > 0 && (
             <p className={styles.listTitle}>Chats</p>
@@ -245,7 +260,9 @@ const ChatsList = () => {
                 title={
                   chat.title
                     ? chat.title
-                    : `${chat.userInfo.firstName} ${chat.userInfo.lastName}`
+                    : chat.userInfo?.firstName
+                    ? `${chat.userInfo.firstName} ${chat.userInfo.lastName}`
+                    : "Unknown user"
                 }
                 key={chat.id}
               >
@@ -259,9 +276,9 @@ const ChatsList = () => {
                       ? chat.chatImgUrl
                         ? chat.chatImgUrl
                         : "/defaultGroup.webp"
-                      : chat.userInfo.avatarUrl
+                      : chat.userInfo?.avatarUrl
                       ? chat.userInfo.avatarUrl
-                      : chat.userInfo.sex === "female"
+                      : chat.userInfo?.sex === "female"
                       ? "/defaultFemale.webp"
                       : "/defaultMale.webp"
                   }
@@ -277,11 +294,16 @@ const ChatsList = () => {
                   <p className={styles.name}>
                     {chat.title
                       ? chat.title
-                      : chat.userInfo.firstName
+                      : chat.userInfo?.firstName
                       ? `${chat.userInfo.firstName} ${chat.userInfo.lastName}`
                       : "Unknown user"}
                   </p>
-                  <p className={styles.lastMsg}>{chat.lastMsg.value}</p>
+                  <p className={styles.lastMsg}>
+                    {chat.lastMsg.sentBy === auth.currentUser?.uid
+                      ? "You: "
+                      : ""}{" "}
+                    {chat.lastMsg.value}
+                  </p>
                 </div>
               </NavLink>
             );
