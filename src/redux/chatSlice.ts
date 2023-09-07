@@ -20,7 +20,7 @@ export type chatStateType = {
   status: string;
   id: string;
   messages: {
-    timestamp: Date;
+    timestamp: string;
     sentBy: string;
     text: string;
     gifUrl: string;

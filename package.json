@@ -13,6 +13,7 @@
     "emoji-picker-react": "^4.4.8",
     "firebase": "^10.1.0",
     "gif-picker-react": "^1.1.0",
+    "js-file-download": "^0.4.12",
     "react": "^18.2.0",
     "react-animate-height": "^3.1.1",
     "react-avatar-editor": "^13.0.0",

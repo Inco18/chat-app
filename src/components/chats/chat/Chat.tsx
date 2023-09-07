@@ -14,6 +14,7 @@ import { useLocation, useParams } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../../hooks/reduxHooks";
 import Spinner from "../../UI/Spinner";
 import { openChatWithId } from "../../../redux/chatActions";
+import { auth } from "../../../services/firebase";
 
 const sidebarClassnames = {
   enter: styles.sidebarEnter,
@@ -43,7 +44,10 @@ const Chat = () => {
     chatState.status !== "error" &&
     chatState.status !== "openingChat" &&
     chatState.id
-  )
+  ) {
+    const otherUser = chatState.users.filter(
+      (user) => user.uid !== auth.currentUser?.uid
+    );
     return (
       <>
         <div className={styles.container}>
@@ -55,9 +59,9 @@ const Chat = () => {
                     ? chatState.chatImgUrl
                       ? chatState.chatImgUrl
                       : "/defaultGroup.webp"
-                    : chatState.users[1] && chatState.users[1].avatarUrl
-                    ? chatState.users[1].avatarUrl
-                    : chatState.users[1] && chatState.users[1].sex === "female"
+                    : otherUser[0] && otherUser[0].avatarUrl
+                    ? otherUser[0].avatarUrl
+                    : otherUser[0] && otherUser[0].sex === "female"
                     ? "/defaultFemale.webp"
                     : "/defaultMale.webp"
                 }
@@ -72,9 +76,9 @@ const Chat = () => {
                   <>
                     <span>Conversation with</span>{" "}
                     <span className={styles.bold}>
-                      {chatState.users[1]
-                        ? `${chatState.users[1].firstName}
-                      ${chatState.users[1].lastName}`
+                      {otherUser[0]
+                        ? `${otherUser[0].firstName}
+                      ${otherUser[0].lastName}`
                         : "Unknown user"}
                     </span>
                   </>
@@ -151,6 +155,7 @@ const Chat = () => {
         </CSSTransition>
       </>
     );
+  }
 };
 
 export default Chat;

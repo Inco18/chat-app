@@ -348,6 +348,8 @@ export const sendMessage = createAsyncThunk<
         dbLastMsg.value = "sent files";
     }
 
+    if (message.gifUrl) dbLastMsg.value = "sent a gif";
+
     await addDoc(
       collection(db, "messages", getState().chat.id, "messages"),
       dbMessage

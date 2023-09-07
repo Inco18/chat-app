@@ -13,15 +13,31 @@ import { auth, db, storage } from "../../../services/firebase";
 import { receiveLastMsg } from "../../../redux/chatSlice";
 import { loadMoreMsg } from "../../../redux/chatActions";
 import InfiniteScroll from "react-infinite-scroll-component";
+import { ReactComponent as FileImg } from "../../../assets/file.svg";
 import { ReactComponent as SmallSpinner } from "../../../assets/spinner.svg";
+import Lightbox from "yet-another-react-lightbox";
+import "yet-another-react-lightbox/styles.css";
 
 import styles from "./Messages.module.css";
 import { ref } from "firebase/storage";
+import fileDownload from "js-file-download";
+import Fullscreen from "yet-another-react-lightbox/plugins/fullscreen";
+import Download from "yet-another-react-lightbox/plugins/download";
+import Zoom from "yet-another-react-lightbox/plugins/zoom";
+
+const msgDateFormat = new Intl.DateTimeFormat("en-GB", {
+  day: "numeric",
+  month: "short",
+  year: "numeric",
+  hour: "2-digit",
+  minute: "2-digit",
+});
 
 const Messages = () => {
   const chatState = useAppSelector((state) => state.chat);
   const dispatch = useAppDispatch();
   const [isScrolledToBottom, setIsScrolledToBottom] = useState(true);
+  const [lightboxImg, setLightboxImg] = useState("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
@@ -41,21 +57,22 @@ const Messages = () => {
   );
   useEffect(() => {
     const unsub = onSnapshot(latestMsgQuery, (querySnapshot) => {
-      const data = querySnapshot.docs[0].data();
-      dispatch(
-        receiveLastMsg({
-          ...data,
-          timestamp: data.timestamp.toDate().toString(),
-        })
-      );
+      if (
+        !querySnapshot.metadata.hasPendingWrites &&
+        querySnapshot.docChanges()[0].type !== "modified"
+      ) {
+        const data = querySnapshot.docs[0].data();
+        dispatch(
+          receiveLastMsg({
+            ...data,
+            timestamp: data.timestamp.toDate().toString(),
+          })
+        );
+      }
     });
 
     return () => unsub();
   }, []);
-
-  const func = async () => {
-    console.log(123);
-  };
 
   return (
     <div
@@ -65,7 +82,7 @@ const Messages = () => {
     >
       <InfiniteScroll
         inverse={true}
-        dataLength={chatState.messages.length + 21}
+        dataLength={chatState.messages.length}
         next={() => dispatch(loadMoreMsg({}))}
         hasMore={true}
         loader={<></>}
@@ -75,159 +92,210 @@ const Messages = () => {
             ? setIsScrolledToBottom(true)
             : setIsScrolledToBottom(false)
         }
+        style={{ overflowAnchor: "none" }}
       >
         {chatState.status === "loadingMessages" && (
           <div className={styles.spinner}>
             <SmallSpinner />
           </div>
         )}
-        {chatState.messages.map((message) => {
-          if (message.text) {
-            return (
-              <div
-                key={message.timestamp.toString()}
-                className={`${styles.textMessage} ${
-                  message.sentBy === auth.currentUser?.uid
-                    ? styles.your
-                    : styles.other
-                }`}
-              >
-                {message.text}
+        {chatState.messages.map((message, i) => {
+          let timeSent;
+
+          if (
+            (i > 0 &&
+              message.sentBy !== auth.currentUser?.uid &&
+              message.sentBy !== chatState.messages[i - 1].sentBy) ||
+            (i == 0 && message.sentBy !== auth.currentUser?.uid) ||
+            (i > 0 &&
+              message.sentBy !== auth.currentUser?.uid &&
+              parseInt(
+                (new Date(message.timestamp).getTime() / 1000).toFixed(0)
+              ) -
+                parseInt(
+                  (
+                    new Date(chatState.messages[i - 1].timestamp).getTime() /
+                    1000
+                  ).toFixed(0)
+                ) >
+                600)
+          ) {
+            const sentByUser = chatState.users.filter(
+              (user) => user.uid === message.sentBy
+            );
+            timeSent = (
+              <div className={styles.sentTime} key={`time${message.timestamp}`}>
+                <img
+                  src={
+                    sentByUser[0] && sentByUser[0].avatarUrl
+                      ? sentByUser[0].avatarUrl
+                      : sentByUser[0] && sentByUser[0].sex === "female"
+                      ? "/defaultFemale.webp"
+                      : "/defaultMale.webp"
+                  }
+                />
+                {chatState.settings.nicknames[message.sentBy]
+                  ? chatState.settings.nicknames[message.sentBy]
+                  : `${sentByUser[0].firstName} ${sentByUser[0].lastName}`}
+                <span className={styles.time}>
+                  {msgDateFormat.format(new Date(message.timestamp))}
+                </span>
               </div>
             );
-          } else if (message.filesUrls) {
-            return message.filesUrls.map((fileUrl) => {
-              const fileRef = ref(storage, fileUrl);
-              console.log(fileRef);
-              return (
+          } else if (
+            (i > 0 &&
+              message.sentBy === auth.currentUser?.uid &&
+              parseInt(
+                (new Date(message.timestamp).getTime() / 1000).toFixed(0)
+              ) -
+                parseInt(
+                  (
+                    new Date(chatState.messages[i - 1].timestamp).getTime() /
+                    1000
+                  ).toFixed(0)
+                ) >
+                600) ||
+            (i === 0 && message.sentBy === auth.currentUser?.uid) ||
+            (i > 0 &&
+              message.sentBy === auth.currentUser?.uid &&
+              chatState.messages[i - 1].sentBy !== auth.currentUser?.uid)
+          ) {
+            timeSent = (
+              <div
+                className={styles.sentTime + " " + styles.your}
+                key={`time${message.timestamp}`}
+              >
+                <span className={styles.time}>
+                  {msgDateFormat.format(new Date(message.timestamp))}
+                </span>
+              </div>
+            );
+          }
+
+          if (message.text && message.filesUrls.length < 1) {
+            return (
+              <>
+                {timeSent && timeSent}
                 <div
                   key={message.timestamp.toString()}
+                  title={msgDateFormat.format(new Date(message.timestamp))}
                   className={`${styles.textMessage} ${
                     message.sentBy === auth.currentUser?.uid
                       ? styles.your
                       : styles.other
                   }`}
                 >
-                  Jakieś pliki czy coś
+                  {message.text}
                 </div>
-              );
-            });
+              </>
+            );
+          }
+          if (message.filesUrls.length > 0) {
+            return (
+              <>
+                {timeSent && timeSent}
+                <div
+                  title={msgDateFormat.format(new Date(message.timestamp))}
+                  key={message.timestamp.toString()}
+                  className={`${styles.filesMessage} ${
+                    message.sentBy === auth.currentUser?.uid
+                      ? styles.your
+                      : styles.other
+                  }`}
+                >
+                  {message.text && <p>{message.text}</p>}
+                  <div
+                    className={
+                      message.filesUrls.some((fileUrl) => {
+                        const fileRef = ref(storage, fileUrl);
+                        return (
+                          fileRef.name.includes(".jpg") ||
+                          fileRef.name.includes(".jpeg") ||
+                          fileRef.name.includes(".png") ||
+                          fileRef.name.includes(".webp")
+                        );
+                      })
+                        ? styles.imagesContainer
+                        : styles.filesContainer
+                    }
+                  >
+                    {message.filesUrls.map((fileUrl) => {
+                      const fileRef = ref(storage, fileUrl);
+                      if (
+                        fileRef.name.includes(".jpg") ||
+                        fileRef.name.includes(".jpeg") ||
+                        fileRef.name.includes(".png") ||
+                        fileRef.name.includes(".webp")
+                      ) {
+                        return (
+                          <button
+                            key={fileUrl}
+                            className={styles.imgBtn}
+                            onClick={() => {
+                              setLightboxImg(fileUrl);
+                            }}
+                          >
+                            <img src={fileUrl} alt={fileRef.name} />
+                          </button>
+                        );
+                      } else {
+                        return (
+                          <button
+                            key={fileUrl}
+                            className={styles.fileBtn}
+                            onClick={() => {
+                              const xhr = new XMLHttpRequest();
+                              xhr.responseType = "blob";
+                              xhr.onload = (event) => {
+                                const blob = xhr.response;
+                                fileDownload(blob, fileRef.name);
+                              };
+                              xhr.open("GET", fileUrl);
+                              xhr.send();
+                            }}
+                          >
+                            <FileImg className={styles.fileImg} />
+                            <div className={styles.fileBtnText}>
+                              {fileRef.name}
+                            </div>
+                          </button>
+                        );
+                      }
+                    })}
+                  </div>
+                </div>
+              </>
+            );
+          }
+
+          if (message.gifUrl) {
+            return (
+              <>
+                {timeSent && timeSent}
+                <div
+                  title={msgDateFormat.format(new Date(message.timestamp))}
+                  key={message.timestamp}
+                  className={`${styles.gifMessage} ${
+                    message.sentBy === auth.currentUser?.uid
+                      ? styles.your
+                      : styles.other
+                  }`}
+                >
+                  <img src={message.gifUrl} />
+                </div>
+              </>
+            );
           }
         })}
-        <div className={styles.sentTime + " " + styles.your}>
-          <span className={styles.time}>13:45</span>
-        </div>
-        <div className={styles.textMessage + " " + styles.your}>
-          Your message text
-        </div>
-        <div className={styles.sentTime}>
-          <img src={defaultImg} />
-          John Paul
-          <span className={styles.time}>14:05</span>
-        </div>
-        <div className={styles.textMessage + " " + styles.other}>
-          Lorem, ipsum dolor sit amet consectetur adipisicing elit. Dolores modi
-          ipsam deleniti est nihil error veniam ratione id et accusamus beatae
-          aspernatur illum, culpa provident delectus odio quos ad consequuntur!
-          Debitis ullam architecto iusto pariatur voluptatum, tempora
-          praesentium. Excepturi ratione iure ad in explicabo quod, consectetur
-          voluptas vero accusamus error!
-        </div>
-        <div className={styles.textMessage + " " + styles.other}>
-          Lorem, ipsum dolor sit amet consectetur adipisicing elit. Dolores modi
-          ipsam deleniti est nihil error veniam ratione id et accusamus beatae
-          aspernatur illum, culpa provident delectus odio quos ad consequuntur!
-          Debitis ullam architecto iusto pariatur voluptatum, tempora
-          praesentium. Excepturi ratione iure ad in explicabo quod, consectetur
-          voluptas vero accusamus error!
-        </div>
-        <div className={styles.textMessage + " " + styles.other}>
-          Lorem, ipsum dolor sit amet consectetur adipisicing elit. Dolores modi
-          ipsam deleniti est nihil error veniam ratione id et accusamus beatae
-          aspernatur illum, culpa provident delectus odio quos ad consequuntur!
-          Debitis ullam architecto iusto pariatur voluptatum, tempora
-          praesentium. Excepturi ratione iure ad in explicabo quod, consectetur
-          voluptas vero accusamus error!
-        </div>
-        <div className={styles.sentTime + " " + styles.your}>
-          <span className={styles.time}>14:45</span>
-        </div>
-        <div className={styles.textMessage + " " + styles.your}>
-          Lorem, ipsum dolor sit amet consectetur adipisicing elit. Dolores modi
-          ipsam deleniti est nihil error veniam ratione id et accusamus beatae
-          aspernatur illum, culpa provident delectus odio quos ad consequuntur!
-          Debitis ullam architecto iusto pariatur voluptatum, tempora
-          praesentium. Excepturi ratione iure ad in explicabo quod, consectetur
-          voluptas vero accusamus error!
-        </div>
-        <div className={styles.sentTime + " " + styles.your}>
-          <span className={styles.time}>14:55</span>
-        </div>
-        <div className={styles.textMessage + " " + styles.other}>
-          Lorem, ipsum dolor sit amet consectetur adipisicing elit. Dolores modi
-          ipsam deleniti est nihil error veniam ratione id et accusamus beatae
-          aspernatur illum, culpa provident delectus odio quos ad consequuntur!
-          Debitis ullam architecto iusto pariatur voluptatum, tempora
-          praesentium. Excepturi ratione iure ad in explicabo quod, consectetur
-          voluptas vero accusamus error!
-        </div>
-        <div className={styles.sentTime + " " + styles.your}>
-          <span className={styles.time}>13:45</span>
-        </div>
-        <div className={styles.textMessage + " " + styles.your}>
-          Your message text
-        </div>
-        <div className={styles.sentTime}>
-          <img src={defaultImg} />
-          John Paul
-          <span className={styles.time}>14:05</span>
-        </div>
-        <div className={styles.textMessage + " " + styles.other}>
-          Lorem, ipsum dolor sit amet consectetur adipisicing elit. Dolores modi
-          ipsam deleniti est nihil error veniam ratione id et accusamus beatae
-          aspernatur illum, culpa provident delectus odio quos ad consequuntur!
-          Debitis ullam architecto iusto pariatur voluptatum, tempora
-          praesentium. Excepturi ratione iure ad in explicabo quod, consectetur
-          voluptas vero accusamus error!
-        </div>
-        <div className={styles.textMessage + " " + styles.other}>
-          Lorem, ipsum dolor sit amet consectetur adipisicing elit. Dolores modi
-          ipsam deleniti est nihil error veniam ratione id et accusamus beatae
-          aspernatur illum, culpa provident delectus odio quos ad consequuntur!
-          Debitis ullam architecto iusto pariatur voluptatum, tempora
-          praesentium. Excepturi ratione iure ad in explicabo quod, consectetur
-          voluptas vero accusamus error!
-        </div>
-        <div className={styles.textMessage + " " + styles.other}>
-          Lorem, ipsum dolor sit amet consectetur adipisicing elit. Dolores modi
-          ipsam deleniti est nihil error veniam ratione id et accusamus beatae
-          aspernatur illum, culpa provident delectus odio quos ad consequuntur!
-          Debitis ullam architecto iusto pariatur voluptatum, tempora
-          praesentium. Excepturi ratione iure ad in explicabo quod, consectetur
-          voluptas vero accusamus error!
-        </div>
-        <div className={styles.sentTime + " " + styles.your}>
-          <span className={styles.time}>14:45</span>
-        </div>
-        <div className={styles.textMessage + " " + styles.your}>
-          Lorem, ipsum dolor sit amet consectetur adipisicing elit. Dolores modi
-          ipsam deleniti est nihil error veniam ratione id et accusamus beatae
-          aspernatur illum, culpa provident delectus odio quos ad consequuntur!
-          Debitis ullam architecto iusto pariatur voluptatum, tempora
-          praesentium. Excepturi ratione iure ad in explicabo quod, consectetur
-          voluptas vero accusamus error!
-        </div>
-        <div className={styles.sentTime + " " + styles.your}>
-          <span className={styles.time}>14:55</span>
-        </div>
-        <div className={styles.textMessage + " " + styles.other}>
-          Lorem, ipsum dolor sit amet consectetur adipisicing elit. Dolores modi
-          ipsam deleniti est nihil error veniam ratione id et accusamus beatae
-          aspernatur illum, culpa provident delectus odio quos ad consequuntur!
-          Debitis ullam architecto iusto pariatur voluptatum, tempora
-          praesentium. Excepturi ratione iure ad in explicabo quod, consectetur
-          voluptas vero accusamus error!
-        </div>
+        <Lightbox
+          open={Boolean(lightboxImg)}
+          close={() => setLightboxImg("")}
+          slides={[{ src: lightboxImg }]}
+          plugins={[Fullscreen, Download, Zoom]}
+          carousel={{ finite: true }}
+          controller={{ closeOnBackdropClick: true }}
+          render={{ buttonPrev: () => null, buttonNext: () => null }}
+        />
         <div ref={messagesEndRef} />
       </InfiniteScroll>
     </div>

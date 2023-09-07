@@ -53,6 +53,9 @@ const TopContainer = (props: { toggleSearchInput: () => void }) => {
     });
   };
 
+  const otherUser = chatState.users.filter(
+    (user) => user.uid !== auth.currentUser?.uid
+  );
   return (
     <div className={styles.topContainer}>
       <div className={styles.chatWithContainer}>
@@ -62,9 +65,9 @@ const TopContainer = (props: { toggleSearchInput: () => void }) => {
               ? chatState.chatImgUrl
                 ? chatState.chatImgUrl
                 : "/defaultGroup.webp"
-              : chatState.users[1] && chatState.users[1].avatarUrl
-              ? chatState.users[1].avatarUrl
-              : chatState.users[1] && chatState.users[1].sex === "female"
+              : otherUser[0] && otherUser[0].avatarUrl
+              ? otherUser[0].avatarUrl
+              : otherUser[0] && otherUser[0].sex === "female"
               ? "/defaultFemale.webp"
               : "/defaultMale.webp"
           }
@@ -73,8 +76,8 @@ const TopContainer = (props: { toggleSearchInput: () => void }) => {
           <p>{chatState.title}</p>
         ) : (
           <p>
-            {chatState.users[1]
-              ? `${chatState.users[1].firstName} ${chatState.users[1].lastName}`
+            {otherUser[0]
+              ? `${otherUser[0].firstName} ${otherUser[0].lastName}`
               : "Unknown user"}
           </p>
         )}

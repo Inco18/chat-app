@@ -2,6 +2,7 @@
   padding: 1rem;
   height: 100%;
   overflow-y: scroll;
+  overflow-anchor: none;
 }
 
 .textMessage {
@@ -11,12 +12,16 @@
   margin-bottom: 0.5rem;
 }
 
-.textMessage.other {
+.textMessage.other,
+.filesMessage.other,
+.gifMessage.other {
   border-radius: 0 1rem 1rem 1rem;
   background-color: var(--accent-dark);
 }
 
-.textMessage.your {
+.textMessage.your,
+.filesMessage.your,
+.gifMessage.your {
   margin-left: auto;
   border-radius: 1rem 1rem 0 1rem;
   background-color: var(--accent-main);
@@ -50,4 +55,103 @@
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.filesMessage {
+  padding: 1rem;
+  max-width: 60%;
+  width: fit-content;
+  margin-bottom: 0.5rem;
+}
+
+.filesMessage p {
+  margin-bottom: 0.5rem;
+}
+
+.filesContainer {
+  display: flex;
+  flex-wrap: wrap;
+  width: fit-content;
+  gap: 0.5rem;
+}
+
+.imagesContainer {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(8rem, 1fr));
+  gap: 0.5rem;
+}
+
+.fileBtn {
+  display: grid;
+  grid-template-columns: auto auto;
+  place-items: center;
+  gap: 0.5rem;
+  background-color: var(--accent-light);
+  padding: 0.5rem;
+  border-radius: 1rem;
+  position: relative;
+  height: 3.5rem;
+  cursor: pointer;
+  border: 0;
+  transition: 0.1s;
+  overflow: hidden;
+  max-width: 15rem;
+}
+
+.fileBtn:hover {
+  background-color: var(--accent-vlight);
+}
+
+.fileBtnText {
+  overflow: hidden;
+  font-size: 0.9rem;
+  word-break: break-all;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  white-space: pre-wrap;
+  font-size: 0.9rem;
+}
+
+.fileImg {
+  height: 1.5rem;
+  width: 1.5rem;
+  color: var(--text);
+}
+
+.imgBtn {
+  border-radius: 1rem;
+  position: relative;
+  cursor: pointer;
+  border: 0;
+  transition: 0.1s;
+  overflow: hidden;
+  padding: 0;
+  border: 0;
+  background-color: var(--accent-light);
+  width: 100%;
+  height: 100%;
+}
+
+.imgBtn:hover {
+  filter: brightness(0.5);
+}
+
+.imgBtn img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  width: auto;
+}
+
+.gifMessage {
+  padding: 1rem;
+  max-width: 60%;
+  width: fit-content;
+  margin-bottom: 0.5rem;
+}
+
+.gifMessage img {
+  border-radius: 1rem;
+  max-height: 12rem;
 }
