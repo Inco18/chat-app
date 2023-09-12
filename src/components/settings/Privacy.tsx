@@ -114,7 +114,9 @@ const Privacy = () => {
         </form>
       )}
       <h4 className={`${styles.fieldName} ${styles.longFieldName}`}>
-        <label htmlFor="textSwitch">Allow unknown users to text you</label>
+        <label htmlFor="textSwitch">
+          Allow unknown users to text you and make groups with you
+        </label>
         {isChangingAllowText && (
           <SmallSpinner className={styles.absoluteSpinner} />
         )}

@@ -94,10 +94,12 @@ const Other = () => {
                     : "Mute"}
                 </p>
               </div>
-              <div className={styles.option} onClick={onBlock}>
-                <Blocked className={styles.optionImg} />
-                <p className={styles.optionText}>Block</p>
-              </div>
+              {chatState.title === "" && (
+                <div className={styles.option} onClick={onBlock}>
+                  <Blocked className={styles.optionImg} />
+                  <p className={styles.optionText}>Block</p>
+                </div>
+              )}
             </>
           )}
           <div className={styles.option} onClick={onDelete}>

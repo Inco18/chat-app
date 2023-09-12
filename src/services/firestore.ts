@@ -76,11 +76,9 @@ export const handleOtherAction = (startingArray: string[]) => {
   if (!userId) throw new Error("Could not get user's id");
   let resultArray = [];
   if (startingArray.includes(userId)) {
-    console.log(1);
     resultArray = startingArray.filter((uid) => {
       return uid !== userId;
     });
-    console.log(startingArray);
   } else {
     resultArray.push(userId);
   }

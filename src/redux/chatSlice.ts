@@ -10,6 +10,7 @@ import {
   handleMute,
   handlePermDelete,
   loadMoreMsg,
+  markLastMsgAsRead,
   openChatWithClick,
   openChatWithId,
   sendMessage,
@@ -46,6 +47,12 @@ export type chatStateType = {
     themeColorLightHover: string;
     nicknames: { [key: string]: string };
   };
+  lastMsg: {
+    readBy: string[];
+    value: string;
+    sentBy: string;
+    timestamp: string;
+  };
 };
 
 export const initialState: chatStateType = {
@@ -65,6 +72,12 @@ export const initialState: chatStateType = {
     themeColorLight: "",
     themeColorLightHover: "",
     nicknames: {},
+  },
+  lastMsg: {
+    readBy: [],
+    value: "",
+    sentBy: "",
+    timestamp: "",
   },
 };
 
@@ -235,6 +248,18 @@ const chatSlice = createSlice({
       .addCase(loadMoreMsg.rejected, (state, action) => {
         state.status = "error";
         toast.error("Could not load messages: " + action.error.message);
+      })
+      .addCase(markLastMsgAsRead.pending, (state) => {
+        state.status = "markingAsRead";
+      })
+      .addCase(markLastMsgAsRead.fulfilled, (state, action) => {
+        state.status = "idle";
+      })
+      .addCase(markLastMsgAsRead.rejected, (state, action) => {
+        state.status = "error";
+        toast.error(
+          "Could not mark last message as read: " + action.error.message
+        );
       });
   },
 });

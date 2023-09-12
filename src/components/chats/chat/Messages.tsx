@@ -11,7 +11,7 @@ import {
 } from "firebase/firestore";
 import { auth, db, storage } from "../../../services/firebase";
 import { receiveLastMsg } from "../../../redux/chatSlice";
-import { loadMoreMsg } from "../../../redux/chatActions";
+import { loadMoreMsg, markLastMsgAsRead } from "../../../redux/chatActions";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { ReactComponent as FileImg } from "../../../assets/file.svg";
 import { ReactComponent as SmallSpinner } from "../../../assets/spinner.svg";
@@ -73,6 +73,17 @@ const Messages = () => {
 
     return () => unsub();
   }, []);
+
+  useEffect(() => {
+    if (
+      chatState.messages.length > 0 &&
+      chatState.messages[chatState.messages.length - 1].sentBy !==
+        auth.currentUser?.uid &&
+      isScrolledToBottom
+    ) {
+      dispatch(markLastMsgAsRead({}));
+    }
+  }, [chatState.messages, isScrolledToBottom]);
 
   return (
     <div

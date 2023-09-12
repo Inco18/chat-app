@@ -10,7 +10,7 @@ import styles from "./Chat.module.css";
 import ChatInput from "./ChatInput";
 import Messages from "./Messages";
 import ChatSidebar from "./ChatSidebar";
-import { useLocation, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../../hooks/reduxHooks";
 import Spinner from "../../UI/Spinner";
 import { openChatWithId } from "../../../redux/chatActions";
@@ -31,10 +31,15 @@ const Chat = () => {
   const chatState = useAppSelector((state) => state.chat);
   const dispatch = useAppDispatch();
   const params = useParams();
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (params.chatId && !chatState.id && chatState.status !== "openingChat") {
-      dispatch(openChatWithId(params.chatId));
+      dispatch(openChatWithId(params.chatId)).then((action) => {
+        console.log(action.payload);
+        if (action.payload.blocked.length > 0)
+          navigate(`/chats/blocked/${action.payload.id}`);
+      });
     }
   }, [params]);
 
@@ -90,43 +95,6 @@ const Chat = () => {
               onClick={() => setSidebarVisible((prev) => !prev)}
             />
           </div>
-
-          {searchInputVisible && (
-            <div className={styles.searchContainer}>
-              <form className={styles.searchForm}>
-                <div className={styles.inputContainer}>
-                  <input
-                    type="text"
-                    className={styles.searchInput}
-                    placeholder="Search"
-                  />
-                  <button type="submit" className={styles.submitButton}>
-                    <Magnifier className={styles.buttonIcon} />
-                  </button>
-                </div>
-              </form>
-              <div className={styles.searchRightContainer}>
-                <p className={styles.foundNumber}>Found: 5</p>
-                <Arrow
-                  style={{
-                    transform: "rotate(90deg)",
-                    color: "var(--accent-main)",
-                    opacity: 1,
-                    cursor: "pointer",
-                  }}
-                  className={styles.arrow}
-                />
-                <Arrow
-                  style={{ transform: "rotate(-90deg)" }}
-                  className={styles.arrow}
-                />
-                <Close
-                  className={styles.closeIcon}
-                  onClick={() => setSearchInputVisible(false)}
-                />
-              </div>
-            </div>
-          )}
 
           <Messages />
           {!pathname.includes("archived") &&

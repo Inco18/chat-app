@@ -21,7 +21,6 @@ export type userStateType = {
   lastName: string;
   sex: string;
   birthDate: string;
-  notifications: string[];
   status: string;
   avatarUrl: string | null;
   email: string;
@@ -33,7 +32,6 @@ export const initialState: userStateType = {
   lastName: "",
   sex: "",
   birthDate: "",
-  notifications: [],
   status: "loadingUser",
   avatarUrl: null,
   email: "",
@@ -72,7 +70,6 @@ const userSlice = createSlice({
         state.birthDate = action.payload.birthDate;
         state.sex = action.payload.sex;
         state.avatarUrl = action.payload.avatarUrl;
-        state.notifications = action.payload.notifications;
         state.email = action.payload.email;
         state.allowText = action.payload.allowText || true;
         state.status = "afterSignIn";
@@ -104,7 +101,6 @@ const userSlice = createSlice({
         state.birthDate = action.payload.birthDate;
         state.sex = action.payload.sex;
         state.avatarUrl = action.payload.avatarUrl;
-        state.notifications = action.payload.notifications;
         state.email = action.payload.email;
         state.allowText = action.payload.allowText;
         state.status = "idle";

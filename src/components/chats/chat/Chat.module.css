@@ -98,19 +98,6 @@
   }
 }
 
-.searchContainer {
-  display: grid;
-  grid-template-columns: auto max-content;
-  gap: 1rem;
-  background-color: var(--dark);
-  padding: 0.5rem;
-}
-
-.searchForm {
-  gap: 0.5rem;
-  width: 100%;
-}
-
 .inputContainer {
   display: grid;
   grid-template-columns: auto min-content;

@@ -2,6 +2,7 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 import {
   Timestamp,
   addDoc,
+  arrayUnion,
   collection,
   deleteDoc,
   doc,
@@ -260,6 +261,30 @@ export const handleBlock = createAsyncThunk<
     blocked: resultArray,
     favourite: [],
   });
+  const otherUserId = getState().chat.users.filter(
+    (user) => user.uid !== auth.currentUser?.uid
+  )[0].uid;
+  if (auth.currentUser?.uid && resultArray.includes(auth.currentUser.uid)) {
+    await updateDoc(doc(db, "users", otherUserId), {
+      notifications: arrayUnion({
+        timestamp: Timestamp.fromDate(new Date()),
+        text: `You have been blocked by ${getState().user.firstName} ${
+          getState().user.lastName
+        }`,
+        imgUrl: getState().user.avatarUrl,
+      }),
+    });
+  } else {
+    await updateDoc(doc(db, "users", otherUserId), {
+      notifications: arrayUnion({
+        timestamp: Timestamp.fromDate(new Date()),
+        text: `You have been unblocked by ${getState().user.firstName} ${
+          getState().user.lastName
+        }`,
+        imgUrl: getState().user.avatarUrl,
+      }),
+    });
+  }
   return resultArray;
 });
 
@@ -289,7 +314,7 @@ export const handlePermDelete = createAsyncThunk<
   const usersArray = getState().chat.users;
   const newUsersArray = usersArray.filter((user) => user.uid !== userId);
   if (!getState().chat.archived) {
-    const willBeArchived = getState().chat.title === "" ? true : false;
+    const willBeArchived = newUsersArray.length < 2 ? true : false;
     const newDbUsers = newUsersArray.map((user) => user.uid);
     const newTrash = getState().chat.trash.filter((uid) => uid !== userId);
     await updateDoc(doc(db, "chats", getState().chat.id), {
@@ -386,4 +411,14 @@ export const loadMoreMsg = createAsyncThunk<
       };
     })
     .reverse();
+});
+
+export const markLastMsgAsRead = createAsyncThunk<
+  any,
+  any,
+  { state: { user: userStateType; chat: chatStateType } }
+>("chat/markLastMsgAsRead", async (_, { getState }) => {
+  await updateDoc(doc(db, "chats", getState().chat.id), {
+    "lastMsg.readBy": arrayUnion(auth.currentUser?.uid),
+  });
 });

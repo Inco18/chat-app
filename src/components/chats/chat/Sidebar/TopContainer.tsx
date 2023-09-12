@@ -83,15 +83,6 @@ const TopContainer = (props: { toggleSearchInput: () => void }) => {
         )}
       </div>
       <div className={styles.actionsContainer}>
-        <div
-          className={styles.actionContainer}
-          onClick={props.toggleSearchInput}
-        >
-          <div className={styles.iconContainer}>
-            <Magnifier />
-          </div>
-          <p>Search</p>
-        </div>
         {!pathname.includes("archived") &&
           !pathname.includes("blocked") &&
           !pathname.includes("trash") && (

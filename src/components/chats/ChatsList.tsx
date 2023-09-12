@@ -117,7 +117,6 @@ const ChatsList = () => {
                 .docChanges()
                 .filter((change) => change.newIndex === i)[0];
               if (changed && changed.type === "added") {
-                console.log("fetching user");
                 const userDocRef = doc(db, "users", otherUserId);
                 const userDocSnap = await getDoc(userDocRef);
                 userInfo = {
