@@ -72,3 +72,18 @@
   color: var(--text);
   margin: auto;
 }
+
+.attachmentsEnter {
+  transform: translateX(20rem);
+}
+.attachmentsEnterActive {
+  transform: translateX(0);
+  transition: 0.3s;
+}
+.attachmentsExit {
+  transform: translateX(0);
+}
+.attachmentsExitActive {
+  transform: translateX(20rem);
+  transition: 0.3s;
+}

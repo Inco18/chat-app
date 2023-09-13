@@ -104,7 +104,6 @@
 
 .fileBtnText {
   overflow: hidden;
-  font-size: 0.9rem;
   word-break: break-all;
   display: -webkit-box;
   -webkit-box-orient: vertical;

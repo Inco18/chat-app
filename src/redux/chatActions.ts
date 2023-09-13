@@ -49,12 +49,6 @@ export const createChat = createAsyncThunk<
   };
   const docRef = await addDoc(collection(db, "chats"), dbObject);
   await setDoc(doc(db, "messages", docRef.id), {});
-  // await addDoc(collection(db, "messages", docRef.id, "messages"), {
-  //   type: "initial",
-  //   value: "",
-  //   sentAt: Timestamp.fromDate(new Date()),
-  //   sentBy: "",
-  // });
 
   return {
     ...dbObject,
@@ -119,12 +113,6 @@ export const createGroupChat = createAsyncThunk<
   console.log(dbObject);
   await setDoc(newChatRef, dbObject);
   await setDoc(doc(db, "messages", newChatRef.id), {});
-  // await addDoc(collection(db, "messages", newChatRef.id, "messages"), {
-  //   type: "initial",
-  //   value: "",
-  //   sentAt: Timestamp.fromDate(new Date()),
-  //   sentBy: "",
-  // });
 
   return {
     ...dbObject,

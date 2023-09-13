@@ -12,6 +12,7 @@ import {
   getDoc,
   getDocs,
   onSnapshot,
+  orderBy,
   query,
   where,
 } from "firebase/firestore";
@@ -177,7 +178,18 @@ const ChatsList = () => {
         return chat.trash.includes(auth.currentUser?.uid);
     });
 
-    setFilteredList(filtered);
+    const sorted = filtered.sort((a, b) => {
+      if (!a.lastMsg.timestamp && !b.lastMsg.timestamp) return 0;
+      if (!a.lastMsg.timestamp) return 1;
+      if (!b.lastMsg.timestamp) return -1;
+
+      return (
+        new Date(b.lastMsg.timestamp).getTime() -
+        new Date(a.lastMsg.timestamp).getTime()
+      );
+    });
+
+    setFilteredList(sorted);
   }, [list, matches[2].pathname, search]);
 
   const afterChatCreate = (action: any) => {

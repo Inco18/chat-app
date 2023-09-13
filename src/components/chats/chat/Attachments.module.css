@@ -4,6 +4,8 @@
   width: 20rem;
   top: 0;
   left: 0;
+  right: 0;
+  bottom: 0;
   background-color: var(--background);
   overflow-y: auto;
   overflow-x: hidden;
@@ -70,7 +72,8 @@
   border-bottom: 2px solid var(--accent-main);
 }
 
-.navButton:hover:not(.active) {
+.navButton:hover:not(.active),
+.navButton:focus:not(.active) {
   border-bottom: 1px solid var(--accent-main);
 }
 
@@ -126,9 +129,13 @@
   font-weight: 500;
   height: 1lh;
   overflow: hidden;
+  width: 100%;
+  word-break: break-all;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+  white-space: pre-wrap;
   text-overflow: ellipsis;
-  white-space: nowrap;
-  max-width: 50%;
 }
 
 .fileSize {

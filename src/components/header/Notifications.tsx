@@ -1,13 +1,15 @@
 import React, { useEffect, useRef, useState } from "react";
 import { CSSTransition } from "react-transition-group";
 import { ReactComponent as Bell } from "../../assets/bell.svg";
+import { ReactComponent as Remove } from "../../assets/remove.svg";
 import defaultImg from "../../assets/default.png";
 import useOutsideClick from "../../hooks/useOutsideClick";
-
-import styles from "./Notifications.module.css";
-import { Timestamp, doc, onSnapshot } from "firebase/firestore";
+import { Timestamp, doc, onSnapshot, updateDoc } from "firebase/firestore";
 import { auth, db } from "../../services/firebase";
 import { useAppSelector } from "../../hooks/reduxHooks";
+
+import styles from "./Notifications.module.css";
+import { toast } from "react-toastify";
 
 const notificationsClassnames = {
   enter: styles.enter,
@@ -50,6 +52,33 @@ const Notifications = () => {
     return () => unsub();
   }, []);
 
+  const handleRemove = async (index: number) => {
+    if (!auth.currentUser?.uid) return;
+    const newNotifications = notifications.filter(
+      (notification, i) => i !== index
+    );
+    try {
+      await updateDoc(doc(db, "users", auth.currentUser.uid), {
+        notifications: newNotifications,
+      });
+      setNotifications(newNotifications);
+    } catch (error: any) {
+      toast.error("Could not remove all notifications: " + error.message);
+    }
+  };
+
+  const handleRemoveAll = async () => {
+    if (!auth.currentUser?.uid) return;
+    try {
+      await updateDoc(doc(db, "users", auth.currentUser.uid), {
+        notifications: [],
+      });
+      setNotifications([]);
+    } catch (error: any) {
+      toast.error("Could not remove all notifications: " + error.message);
+    }
+  };
+
   return (
     <div className={styles.container}>
       <div
@@ -74,9 +103,9 @@ const Notifications = () => {
                 You don't have any notifications
               </p>
             )}
-            {notifications.map((notification) => {
+            {notifications.map((notification, i) => {
               return (
-                <div className={styles.messageNotification}>
+                <div className={styles.messageNotification} key={i}>
                   <img src={notification.imgUrl} />
                   <div className={styles.notificationRightBlock}>
                     <p className={styles.notificationText}>
@@ -86,10 +115,25 @@ const Notifications = () => {
                       {dateFormat.format(notification.timestamp.toDate())}
                     </p>
                   </div>
+                  <button
+                    className={styles.removeBtn}
+                    onClick={() => handleRemove(i)}
+                  >
+                    <Remove />
+                  </button>
                 </div>
               );
             })}
           </div>
+          {notifications.length > 0 && (
+            <button
+              title="Remove all notifications"
+              className={styles.removeAllBtn}
+              onClick={handleRemoveAll}
+            >
+              <Remove />
+            </button>
+          )}
         </div>
       </CSSTransition>
     </div>

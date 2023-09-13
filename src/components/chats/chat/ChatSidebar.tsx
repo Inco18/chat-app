@@ -1,6 +1,7 @@
-import React, { ForwardedRef, useReducer } from "react";
+import React, { ForwardedRef, useReducer, useState } from "react";
 import { ReactComponent as Pictures } from "../../../assets/pictures.svg";
 import { ReactComponent as File } from "../../../assets/file.svg";
+import { CSSTransition } from "react-transition-group";
 import AnimateHeight from "react-animate-height";
 import Attachments from "./Attachments";
 import TopContainer from "./Sidebar/TopContainer";
@@ -52,6 +53,7 @@ const ChatSidebar = React.forwardRef(
       attachmentsContainerVisible: false,
       initialAttachments: "photos",
     });
+    const [isLoaded, setIsLoaded] = useState<boolean>(false);
     const { pathname } = useLocation();
     const chatState = useAppSelector((state) => state.chat);
 
@@ -108,12 +110,27 @@ const ChatSidebar = React.forwardRef(
           </div>
         </div>
 
-        <Attachments
-          state={state}
-          closeFunction={() =>
-            dispatch({ type: "attachmentsContainerVisible" })
-          }
-        />
+        <CSSTransition
+          in={state.attachmentsContainerVisible}
+          timeout={300}
+          classNames={{
+            enter: styles.attachmentsEnter,
+            enterActive: styles.attachmentsEnterActive,
+            exit: styles.attachmentsExit,
+            exitActive: styles.attachmentsExitActive,
+          }}
+          onEntered={() => setIsLoaded(true)}
+          onExited={() => setIsLoaded(false)}
+          unmountOnExit
+        >
+          <Attachments
+            isLoaded={isLoaded}
+            state={state}
+            closeFunction={() =>
+              dispatch({ type: "attachmentsContainerVisible" })
+            }
+          />
+        </CSSTransition>
       </div>
     );
   }
