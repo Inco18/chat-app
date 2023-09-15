@@ -26,6 +26,7 @@
   height: 2rem;
   width: 2rem;
   border-radius: 100vw;
+  outline: 1px solid var(--accent-dark);
 }
 
 .options {

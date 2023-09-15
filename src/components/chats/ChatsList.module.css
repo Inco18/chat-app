@@ -184,6 +184,7 @@
   height: 3rem;
   width: 3rem;
   border-radius: 100vw;
+  outline: 1px solid var(--accent-dark);
 }
 
 .profileRightContainer {
@@ -239,4 +240,9 @@
 
 .thin .dot {
   top: 5px;
+}
+
+.noChatsMsg {
+  opacity: 0.7;
+  margin: 0 auto;
 }

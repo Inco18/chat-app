@@ -15,6 +15,7 @@ const ThemeContextProvider = (props: { children?: React.ReactNode }) => {
 
   const setDark = () => {
     document.documentElement.style.setProperty("--background", "#20232b");
+    document.documentElement.style.setProperty("--accent-vlight", "#39414b");
     document.documentElement.style.setProperty("--accent-light", "#1a1e23");
     document.documentElement.style.setProperty("--accent-medium", "#1d1e24");
     document.documentElement.style.setProperty("--accent-dark", "#16171b");
@@ -27,12 +28,17 @@ const ThemeContextProvider = (props: { children?: React.ReactNode }) => {
   };
 
   const setLight = () => {
-    document.documentElement.style.setProperty("--background", "#888888");
-    document.documentElement.style.setProperty("--accent-light", "#999999");
-    document.documentElement.style.setProperty("--accent-medium", "#AAAAAA");
-    document.documentElement.style.setProperty("--accent-dark", "#BBBBBB");
-    document.documentElement.style.setProperty("--dark", "#CCCCCC");
-    document.documentElement.style.setProperty("--nav", "#f3fc8a");
+    document.documentElement.style.setProperty("--background", "#FFFFFF");
+    document.documentElement.style.setProperty(
+      "--backgroundAlpha",
+      "#ffffffe6"
+    );
+    document.documentElement.style.setProperty("--accent-vlight", "#f6f7f9 ");
+    document.documentElement.style.setProperty("--accent-light", "#f7f8f9 ");
+    document.documentElement.style.setProperty("--accent-medium", "#f1f2f4 ");
+    document.documentElement.style.setProperty("--accent-dark", "#dcdfe4");
+    document.documentElement.style.setProperty("--dark", "#cad1db ");
+    document.documentElement.style.setProperty("--nav", "#bdb03a");
     document.documentElement.style.setProperty("--accent-main", "#5852d6");
     document.documentElement.style.setProperty("--text", "#000000");
     document.documentElement.style.colorScheme = "light";

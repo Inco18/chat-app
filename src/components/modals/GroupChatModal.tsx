@@ -6,12 +6,11 @@ import { ReactComponent as AddImg } from "../../assets/addImage.svg";
 import { ReactComponent as SmallSpinner } from "../../assets/spinner.svg";
 import AvatarEditor from "react-avatar-editor";
 import ReactSlider from "react-slider";
-
-import styles from "./GroupChatModal.module.css";
 import { query, collection, where, getDocs } from "firebase/firestore";
 import { db, auth } from "../../services/firebase";
 import { useAppDispatch, useAppSelector } from "../../hooks/reduxHooks";
 import { createGroupChat } from "../../redux/chatActions";
+import styles from "./GroupChatModal.module.css";
 
 const GroupChatModal = (props: { afterChatCreate: (action: any) => void }) => {
   const [image, setImage] = useState<File>();

@@ -44,10 +44,7 @@ const reducer = (state: stateType, action: actionType): stateType => {
 };
 
 const ChatSidebar = React.forwardRef(
-  (
-    props: { className: string; toggleSearchInput: () => void },
-    ref: ForwardedRef<HTMLDivElement>
-  ) => {
+  (props: { className: string }, ref: ForwardedRef<HTMLDivElement>) => {
     const [state, dispatch] = useReducer(reducer, {
       attachmentsVisible: false,
       attachmentsContainerVisible: false,
@@ -60,7 +57,7 @@ const ChatSidebar = React.forwardRef(
     return (
       <div className={props.className} ref={ref}>
         <div className={styles.innerContainer}>
-          <TopContainer toggleSearchInput={props.toggleSearchInput} />
+          <TopContainer />
           <div className={styles.optionsContainer}>
             {!pathname.includes("archived") &&
               !pathname.includes("blocked") &&

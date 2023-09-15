@@ -98,6 +98,18 @@ export const loadUser = createAsyncThunk(
     return {
       ...userFromDb,
       email: user.email ? user.email : "",
+      notifications: userFromDb.notifications.map(
+        (notification: {
+          imgUrl: string;
+          text: string;
+          timestamp: Timestamp;
+        }) => {
+          return {
+            ...notification,
+            timestamp: notification.timestamp.toDate().toString(),
+          };
+        }
+      ),
     };
   }
 );

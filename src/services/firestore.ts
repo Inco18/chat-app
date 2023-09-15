@@ -31,7 +31,6 @@ export const loadChatUsers = async (
   currentUser: userStateType
 ) => {
   let newUsers = [];
-  console.log(chatData);
 
   if (!chatData.userInfo) {
     newUsers = await Promise.all(

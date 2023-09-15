@@ -25,6 +25,7 @@ const dateFormat = new Intl.DateTimeFormat("en-GB", {
   hour: "2-digit",
   minute: "2-digit",
 });
+const audio = new Audio("/notification.mp3");
 
 const Notifications = () => {
   const [notificationsVisible, setNotificationsVisible] =
@@ -32,6 +33,12 @@ const Notifications = () => {
   const [notifications, setNotifications] = useState<
     { text: string; timestamp: Timestamp; imgUrl: string }[]
   >([]);
+  const [isInitial, _setIsInitial] = useState(true);
+  const isInitialRef = useRef(isInitial);
+  const setIsInitial = (data: boolean) => {
+    isInitialRef.current = data;
+    _setIsInitial(data);
+  };
 
   const notificationsRef = useRef<HTMLDivElement>(null);
   const bellContainerRef = useRef<HTMLDivElement>(null);
@@ -45,7 +52,22 @@ const Notifications = () => {
     if (auth.currentUser?.uid) {
       unsub = onSnapshot(doc(db, "users", auth.currentUser?.uid), (doc) => {
         if (doc.metadata.hasPendingWrites) return;
-        setNotifications(doc.data()?.notifications || []);
+        setNotifications((prev) => {
+          console.log(
+            doc.data()?.notifications.length > prev.length && !isInitial
+          );
+          if (
+            doc.data()?.notifications &&
+            doc.data()?.notifications.length > prev.length &&
+            !isInitialRef.current
+          ) {
+            console.log(1);
+            audio.play();
+          }
+
+          setIsInitial(false);
+          return doc.data()?.notifications || [];
+        });
       });
     }
 

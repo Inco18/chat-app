@@ -2,10 +2,12 @@ import React, { useEffect, useRef } from "react";
 
 import styles from "./ChatsMain.module.css";
 import { useAppSelector } from "../../hooks/reduxHooks";
+import { useParams } from "react-router-dom";
 
 const ChatsMain = (props: { children?: React.ReactNode }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const chatState = useAppSelector((state) => state.chat);
+  const params = useParams();
   useEffect(() => {
     if (containerRef.current) {
       containerRef.current.style.setProperty(
@@ -26,6 +28,11 @@ const ChatsMain = (props: { children?: React.ReactNode }) => {
   return (
     <main className={styles.mainContainer} ref={containerRef}>
       {props.children}
+      {!params.chatId && (
+        <p className={styles.noChatMsg}>
+          Pick a chat from the list or start a new one
+        </p>
+      )}
     </main>
   );
 };

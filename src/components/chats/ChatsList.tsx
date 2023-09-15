@@ -105,6 +105,12 @@ const ChatsList = () => {
             return {
               id: chatDocSnap.id,
               ...chatData,
+              lastMsg: chatData.lastMsg.timestamp
+                ? {
+                    ...chatData.lastMsg,
+                    timestamp: chatData.lastMsg.timestamp.toDate().toString(),
+                  }
+                : {},
             };
           } else {
             const otherUserId = chatData.users.filter(
@@ -248,6 +254,11 @@ const ChatsList = () => {
       >
         <GroupChatModal afterChatCreate={afterChatCreate} />
       </Modal>
+      {filteredList.length < 1 && (
+        <p className={styles.noChatsMsg}>
+          No chats found. Create a new one or change your search query
+        </p>
+      )}
       <div className={styles.chatsOuter}>
         <div className={styles.chatsInner}>
           {usersList.length > 0 && filteredList.length > 0 && (

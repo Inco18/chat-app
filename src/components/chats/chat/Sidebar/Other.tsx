@@ -5,6 +5,7 @@ import { ReactComponent as Star } from "../../../../assets/star.svg";
 import { ReactComponent as Bell } from "../../../../assets/bell.svg";
 import { ReactComponent as Blocked } from "../../../../assets/blocked.svg";
 import { ReactComponent as Trash } from "../../../../assets/trash.svg";
+import { ReactComponent as Group } from "../../../../assets/group.svg";
 import OptionHeader from "./OptionHeader";
 
 import styles from "./Other.module.css";
@@ -16,9 +17,13 @@ import {
   handleMute,
 } from "../../../../redux/chatActions";
 import { auth } from "../../../../services/firebase";
+import Modal from "../../../modals/Modal";
+import ParticipantsModal from "../../../modals/ParticipantsModal";
 
 const Other = () => {
-  const [otherVisible, setOtherVisible] = useState<boolean>(false);
+  const [otherVisible, setOtherVisible] = useState(false);
+  const [participantsModalVisible, setParticipantsModalVisible] =
+    useState(false);
   const chatState = useAppSelector((state) => state.chat);
   const dispatch = useAppDispatch();
   const { pathname } = useLocation();
@@ -100,6 +105,17 @@ const Other = () => {
                   <p className={styles.optionText}>Block</p>
                 </div>
               )}
+              {chatState.title !== "" && (
+                <div
+                  className={styles.option}
+                  onClick={() => {
+                    setParticipantsModalVisible(true);
+                  }}
+                >
+                  <Group className={styles.optionImg} />
+                  <p className={styles.optionText}>Chat participants</p>
+                </div>
+              )}
             </>
           )}
           <div className={styles.option} onClick={onDelete}>
@@ -107,6 +123,15 @@ const Other = () => {
             <p className={styles.optionText}>Delete</p>
           </div>
         </div>
+        <Modal
+          isOpen={participantsModalVisible}
+          closeFunction={() => setParticipantsModalVisible(false)}
+          title={"Chat participants"}
+        >
+          <ParticipantsModal
+            closeFunction={() => setParticipantsModalVisible(false)}
+          />
+        </Modal>
       </AnimateHeight>
     </>
   );

@@ -138,14 +138,18 @@ const Messages = () => {
               <div className={styles.sentTime} key={`time${message.timestamp}`}>
                 <img
                   src={
-                    sentByUser[0] && sentByUser[0].avatarUrl
+                    !sentByUser[0]
+                      ? "/defaultMale.webp"
+                      : sentByUser[0] && sentByUser[0].avatarUrl
                       ? sentByUser[0].avatarUrl
                       : sentByUser[0] && sentByUser[0].sex === "female"
                       ? "/defaultFemale.webp"
                       : "/defaultMale.webp"
                   }
                 />
-                {chatState.settings.nicknames[message.sentBy]
+                {!sentByUser[0]
+                  ? "Unknown user"
+                  : chatState.settings.nicknames[message.sentBy]
                   ? chatState.settings.nicknames[message.sentBy]
                   : `${sentByUser[0].firstName} ${sentByUser[0].lastName}`}
                 <span className={styles.time}>

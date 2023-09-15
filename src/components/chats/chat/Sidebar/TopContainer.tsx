@@ -21,7 +21,7 @@ import {
 } from "../../../../redux/chatActions";
 import { auth } from "../../../../services/firebase";
 
-const TopContainer = (props: { toggleSearchInput: () => void }) => {
+const TopContainer = () => {
   const [addEventModalOpen, setAddEventModalOpen] = useState<boolean>(false);
   const chatState = useAppSelector((state) => state.chat);
   const dispatch = useAppDispatch();

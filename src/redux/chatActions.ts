@@ -410,3 +410,32 @@ export const markLastMsgAsRead = createAsyncThunk<
     "lastMsg.readBy": arrayUnion(auth.currentUser?.uid),
   });
 });
+
+export const addUsersToGroup = createAsyncThunk<
+  any,
+  any,
+  { state: { user: userStateType; chat: chatStateType } }
+>(
+  "chat/addUsersToGroup",
+  async (addedUsers: chatStateType["users"], { getState }) => {
+    const addedUsersUids = addedUsers.map((user) => user.uid);
+    await updateDoc(doc(db, "chats", getState().chat.id), {
+      users: arrayUnion(...addedUsersUids),
+    });
+    Promise.all(
+      addedUsersUids.map(async (userUid) => {
+        await updateDoc(doc(db, "users", userUid), {
+          notifications: arrayUnion({
+            timestamp: Timestamp.fromDate(new Date()),
+            text: `You have been added to group: ${getState().chat.title} by ${
+              getState().user.firstName
+            } ${getState().user.lastName}`,
+            imgUrl: getState().chat.chatImgUrl || "/defaultGroup.webp",
+          }),
+        });
+      })
+    );
+
+    return addedUsers;
+  }
+);

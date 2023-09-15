@@ -122,7 +122,8 @@
   height: 2.5rem;
   background-color: var(--accent-vlight);
   padding: 0.6rem;
-  border-radius: 1rem;
+  border-radius: 100vw;
+  margin-left: 0.1rem;
 }
 
 .fileName {

@@ -155,7 +155,7 @@ const Attachments = (props: {
                   <LazyLoadImage
                     src={photo.src}
                     id={i.toString()}
-                    key={i}
+                    key={photo.src}
                     effect="blur"
                   />
                 );
@@ -171,7 +171,7 @@ const Attachments = (props: {
                     <LazyLoadImage
                       src={photo.src}
                       id={i.toString()}
-                      key={i}
+                      key={photo.src}
                       effect="blur"
                     />
                   );
@@ -185,6 +185,7 @@ const Attachments = (props: {
               return (
                 <li
                   title={file.name}
+                  key={file.name}
                   tabIndex={0}
                   className={styles.file}
                   onClick={() => {

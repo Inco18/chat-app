@@ -23,6 +23,7 @@
   padding: 0.1rem 0.7rem;
   transition: 0.1s;
   grid-column: 3/4;
+  color: white;
 }
 .changeButton:hover {
   background-color: var(--accent-main-hover);

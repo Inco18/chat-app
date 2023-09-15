@@ -1,5 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import {
+  addUsersToGroup,
   changeChatTheme,
   createChat,
   createGroupChat,
@@ -260,6 +261,17 @@ const chatSlice = createSlice({
         toast.error(
           "Could not mark last message as read: " + action.error.message
         );
+      })
+      .addCase(addUsersToGroup.pending, (state) => {
+        state.status = "addingUsers";
+      })
+      .addCase(addUsersToGroup.fulfilled, (state, action) => {
+        state.status = "idle";
+        state.users.push(...action.payload);
+      })
+      .addCase(addUsersToGroup.rejected, (state, action) => {
+        state.status = "error";
+        toast.error("Could not add users: " + action.error.message);
       });
   },
 });

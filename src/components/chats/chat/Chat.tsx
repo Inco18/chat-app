@@ -25,7 +25,6 @@ const sidebarClassnames = {
 
 const Chat = () => {
   const [sidebarVisible, setSidebarVisible] = useState<boolean>(false);
-  const [searchInputVisible, setSearchInputVisible] = useState<boolean>(false);
   const sidebarRef = useRef<HTMLDivElement>(null);
   const { pathname } = useLocation();
   const chatState = useAppSelector((state) => state.chat);
@@ -36,7 +35,6 @@ const Chat = () => {
   useEffect(() => {
     if (params.chatId && !chatState.id && chatState.status !== "openingChat") {
       dispatch(openChatWithId(params.chatId)).then((action) => {
-        console.log(action.payload);
         if (action.payload.blocked.length > 0)
           navigate(`/chats/blocked/${action.payload.id}`);
       });
@@ -115,15 +113,13 @@ const Chat = () => {
           classNames={sidebarClassnames}
           unmountOnExit
         >
-          <ChatSidebar
-            ref={sidebarRef}
-            className={styles.sidebar}
-            toggleSearchInput={() => setSearchInputVisible((prev) => !prev)}
-          />
+          <ChatSidebar ref={sidebarRef} className={styles.sidebar} />
         </CSSTransition>
       </>
     );
   }
+
+  return <></>;
 };
 
 export default Chat;
