@@ -26,9 +26,9 @@ export const createChat = createAsyncThunk<
   any,
   any,
   { state: { user: userStateType; chat: chatStateType } }
->("chat/createChat", async (userData: any, thunkApi) => {
+>("chat/createChat", async (userData: any, { getState }) => {
   console.log(userData);
-  const currentUser = thunkApi.getState().user;
+  const currentUser = getState().user;
   const dbObject = {
     events: [],
     archived: false,
@@ -49,6 +49,19 @@ export const createChat = createAsyncThunk<
   };
   const docRef = await addDoc(collection(db, "chats"), dbObject);
   await setDoc(doc(db, "messages", docRef.id), {});
+  await updateDoc(doc(db, "users", userData.id), {
+    notifications: arrayUnion({
+      timestamp: Timestamp.fromDate(new Date()),
+      text: `${getState().user.firstName} ${
+        getState().user.lastName
+      } has created a new chat with you`,
+      imgUrl: getState().user.avatarUrl
+        ? getState().user.avatarUrl
+        : getState().user.sex === "female"
+        ? "/defaultFemale.webp"
+        : "/defaultMale.webp",
+    }),
+  });
 
   return {
     ...dbObject,
@@ -77,8 +90,8 @@ export const createGroupChat = createAsyncThunk<
   any,
   any,
   { state: { user: userStateType; chat: chatStateType } }
->("chat/createGroupChat", async (chatData: any, thunkApi) => {
-  const currentUser = thunkApi.getState().user;
+>("chat/createGroupChat", async (chatData: any, { getState }) => {
+  const currentUser = getState().user;
   console.log(chatData);
   const dbObject = {
     events: [],
@@ -113,6 +126,20 @@ export const createGroupChat = createAsyncThunk<
   console.log(dbObject);
   await setDoc(newChatRef, dbObject);
   await setDoc(doc(db, "messages", newChatRef.id), {});
+
+  Promise.all(
+    chatData.users.map(async (user: any) => {
+      await updateDoc(doc(db, "users", user.id), {
+        notifications: arrayUnion({
+          timestamp: Timestamp.fromDate(new Date()),
+          text: `You have been added to group: ${chatData.title} by ${
+            getState().user.firstName
+          } ${getState().user.lastName}`,
+          imgUrl: dbObject.chatImgUrl || "/defaultGroup.webp",
+        }),
+      });
+    })
+  );
 
   return {
     ...dbObject,
@@ -259,7 +286,11 @@ export const handleBlock = createAsyncThunk<
         text: `You have been blocked by ${getState().user.firstName} ${
           getState().user.lastName
         }`,
-        imgUrl: getState().user.avatarUrl,
+        imgUrl: getState().user.avatarUrl
+          ? getState().user.avatarUrl
+          : getState().user.sex === "female"
+          ? "/defaultFemale.webp"
+          : "/defaultMale.webp",
       }),
     });
   } else {
@@ -269,7 +300,11 @@ export const handleBlock = createAsyncThunk<
         text: `You have been unblocked by ${getState().user.firstName} ${
           getState().user.lastName
         }`,
-        imgUrl: getState().user.avatarUrl,
+        imgUrl: getState().user.avatarUrl
+          ? getState().user.avatarUrl
+          : getState().user.sex === "female"
+          ? "/defaultFemale.webp"
+          : "/defaultMale.webp",
       }),
     });
   }
@@ -310,6 +345,30 @@ export const handlePermDelete = createAsyncThunk<
       users: newDbUsers,
       trash: newTrash,
     });
+    if (willBeArchived) {
+      const otherUserId = getState().chat.users.filter(
+        (user) => user.uid !== auth.currentUser?.uid
+      )[0].uid;
+      await updateDoc(doc(db, "users", otherUserId), {
+        notifications: arrayUnion({
+          timestamp: Timestamp.fromDate(new Date()),
+          text: getState().chat.title
+            ? `Group chat ${getState().chat.title} has been archived`
+            : `Chat with ${getState().user.firstName} ${
+                getState().user.lastName
+              } has been archived`,
+          imgUrl: getState().chat.title
+            ? getState().chat.chatImgUrl
+              ? getState().chat.chatImgUrl
+              : "/defaultGroup.webp"
+            : getState().user.avatarUrl
+            ? getState().user.avatarUrl
+            : getState().user.sex === "female"
+            ? "/defaultFemale.webp"
+            : "/defaultMale.webp",
+        }),
+      });
+    }
   } else {
     await deleteDoc(doc(db, "chats", getState().chat.id));
   }
@@ -379,15 +438,14 @@ export const loadMoreMsg = createAsyncThunk<
   any,
   any,
   { state: { user: userStateType; chat: chatStateType } }
->("chat/loadMoreMsg", async (_, { getState }) => {
-  console.log(getState().chat.messages[0].timestamp);
+>("chat/loadMoreMsg", async (msgNumber: number, { getState }) => {
   const q = query(
     collection(db, "messages", getState().chat.id, "messages"),
     orderBy("timestamp", "desc"),
     startAfter(
       Timestamp.fromDate(new Date(getState().chat.messages[0].timestamp))
     ),
-    limit(5)
+    limit(msgNumber)
   );
 
   const querySnapshot = await getDocs(q);

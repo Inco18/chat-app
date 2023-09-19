@@ -164,11 +164,13 @@ const ParticipantsModal = (props: { closeFunction: () => void }) => {
           type="submit"
           className={styles.submitButton}
           disabled={isAdding}
-          onClick={() =>
-            dispatch(addUsersToGroup(addedUsers)).then(() => {
-              props.closeFunction();
-            })
-          }
+          onClick={() => {
+            if (addedUsers.length < 1) props.closeFunction();
+            else
+              dispatch(addUsersToGroup(addedUsers)).then(() => {
+                props.closeFunction();
+              });
+          }}
         >
           {isAdding ? (
             <span className={styles.loadingButtonText}>Adding</span>

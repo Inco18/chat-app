@@ -53,15 +53,11 @@ const Notifications = () => {
       unsub = onSnapshot(doc(db, "users", auth.currentUser?.uid), (doc) => {
         if (doc.metadata.hasPendingWrites) return;
         setNotifications((prev) => {
-          console.log(
-            doc.data()?.notifications.length > prev.length && !isInitial
-          );
           if (
             doc.data()?.notifications &&
             doc.data()?.notifications.length > prev.length &&
             !isInitialRef.current
           ) {
-            console.log(1);
             audio.play();
           }
 

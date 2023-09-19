@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { NavLink, useMatches, useNavigate } from "react-router-dom";
+import { NavLink, useMatches, useNavigate, useParams } from "react-router-dom";
 import useWindowSize from "../../hooks/useWindowSize";
 import { ReactComponent as Magnifier } from "../../assets/magnifier.svg";
 import { ReactComponent as Arrow } from "../../assets/arrow.svg";
@@ -42,7 +42,12 @@ const ChatsList = () => {
   const navigate = useNavigate();
   const matches = useMatches();
   const dispatch = useAppDispatch();
-  const chatState = useAppSelector((state) => state.chat);
+  const params = useParams();
+  const paramsRef = useRef(params);
+
+  useEffect(() => {
+    paramsRef.current = params;
+  }, [params]);
 
   useEffect(() => {
     if (windowSize.width) {
@@ -101,6 +106,22 @@ const ChatsList = () => {
       Promise.all(
         querySnapshot.docs.map(async (chatDocSnap: any, i: number) => {
           const chatData = chatDocSnap.data();
+          if (
+            paramsRef.current.chatId &&
+            chatDocSnap.id === paramsRef.current.chatId
+          ) {
+            if (chatData.archived)
+              navigate(`/chats/archived/${paramsRef.current.chatId}`);
+            else if (chatData.blocked.length > 0)
+              navigate(`/chats/blocked/${paramsRef.current.chatId}`);
+            else if (
+              chatData.favourites?.includes(auth.currentUser?.uid) &&
+              matches[2].pathname.includes("favourites")
+            )
+              navigate(`/chats/favourite/${paramsRef.current.chatId}`);
+            else navigate(`/chats/all/${paramsRef.current.chatId}`);
+          }
+
           if (chatData.title) {
             return {
               id: chatDocSnap.id,

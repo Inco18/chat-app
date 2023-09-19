@@ -45,8 +45,6 @@ const Messages = () => {
   };
 
   useEffect(() => {
-    if (chatState.messages.length < 6 && chatState.messages.length > 0)
-      dispatch(loadMoreMsg({}));
     if (isScrolledToBottom) scrollToBottom();
   }, [chatState.messages]);
 
@@ -68,6 +66,8 @@ const Messages = () => {
             timestamp: data.timestamp.toDate().toString(),
           })
         );
+        if (chatState.messages.length === 0 && querySnapshot.docs.length === 1)
+          dispatch(loadMoreMsg(10));
       }
     });
 
@@ -94,7 +94,9 @@ const Messages = () => {
       <InfiniteScroll
         inverse={true}
         dataLength={chatState.messages.length}
-        next={() => dispatch(loadMoreMsg({}))}
+        next={() => {
+          chatState.messages.length > 0 && dispatch(loadMoreMsg(5));
+        }}
         hasMore={true}
         loader={<></>}
         scrollableTarget="scrollableDivChats"
@@ -112,7 +114,6 @@ const Messages = () => {
         )}
         {chatState.messages.map((message, i) => {
           let timeSent;
-
           if (
             (i > 0 &&
               message.sentBy !== auth.currentUser?.uid &&
@@ -240,7 +241,8 @@ const Messages = () => {
                         fileRef.name.includes(".jpg") ||
                         fileRef.name.includes(".jpeg") ||
                         fileRef.name.includes(".png") ||
-                        fileRef.name.includes(".webp")
+                        fileRef.name.includes(".webp") ||
+                        fileRef.name.includes(".svg")
                       ) {
                         return (
                           <button

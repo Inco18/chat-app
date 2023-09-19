@@ -15,6 +15,10 @@ const ThemeContextProvider = (props: { children?: React.ReactNode }) => {
 
   const setDark = () => {
     document.documentElement.style.setProperty("--background", "#20232b");
+    document.documentElement.style.setProperty(
+      "--backgroundAlpha",
+      "#20232be6"
+    );
     document.documentElement.style.setProperty("--accent-vlight", "#39414b");
     document.documentElement.style.setProperty("--accent-light", "#1a1e23");
     document.documentElement.style.setProperty("--accent-medium", "#1d1e24");
