@@ -11,7 +11,6 @@ import Settings from "./pages/Settings";
 import ReactModal from "react-modal";
 import { ToastContainer, Slide } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-
 import { useContext } from "react";
 import { SettingsNavContextProvider } from "./context/settingsNavContext";
 import FormLayout from "./pages/FormLayout";

@@ -11,4 +11,4 @@
 - React transition group
 - many more
 
-![page screenshot](Screenshot.png)
+![page screenshot](screenshot.png)
