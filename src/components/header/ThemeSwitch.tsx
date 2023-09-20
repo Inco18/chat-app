@@ -1,9 +1,9 @@
-import React, { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { ReactComponent as Moon } from "../../assets/moon.svg";
 import { ReactComponent as Sun } from "../../assets/sun.svg";
+import { ThemeContext } from "../../context/theme-context";
 
 import styles from "./ThemeSwitch.module.css";
-import { ThemeContext } from "../../context/theme-context";
 
 const ThemeSwitch = () => {
   const [switchTransitonEnabled, setSwitchTransitionEnabled] =

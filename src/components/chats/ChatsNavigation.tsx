@@ -1,13 +1,12 @@
-import React, { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
 import { ReactComponent as Star } from "../../assets/star.svg";
 import { ReactComponent as Chats } from "../../assets/chats-side.svg";
 import { ReactComponent as Archived } from "../../assets/archived.svg";
 import { ReactComponent as Blocked } from "../../assets/blocked.svg";
 import { ReactComponent as Trash } from "../../assets/trash.svg";
+import SideNav from "../UI/SideNav";
 
 import styles from "./ChatsNavigation.module.css";
-import SideNav from "../UI/SideNav";
 
 const ChatsNavigation = () => {
   return (

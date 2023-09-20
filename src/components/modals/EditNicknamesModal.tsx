@@ -2,10 +2,10 @@ import React, { useRef, useState } from "react";
 import { ReactComponent as Edit } from "../../assets/edit.svg";
 import { ReactComponent as Check } from "../../assets/check.svg";
 import { ReactComponent as SmallSpinner } from "../../assets/spinner.svg";
-
-import styles from "./EditNicknamesModal.module.css";
 import { useAppDispatch, useAppSelector } from "../../hooks/reduxHooks";
 import { editNickname } from "../../redux/chatActions";
+
+import styles from "./EditNicknamesModal.module.css";
 
 const EditNicknamesModal = () => {
   const [inputOnPerson, setInputOnPerson] = useState<string | undefined>(

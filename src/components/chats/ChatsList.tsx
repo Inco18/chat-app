@@ -6,20 +6,18 @@ import { ReactComponent as Arrow } from "../../assets/arrow.svg";
 import { ReactComponent as Group } from "../../assets/group.svg";
 import { ReactComponent as SmallSpinner } from "../../assets/spinner.svg";
 import {
-  Timestamp,
   collection,
   doc,
   getDoc,
   getDocs,
   onSnapshot,
-  orderBy,
   query,
   where,
 } from "firebase/firestore";
 import { auth, db } from "../../services/firebase";
 import Modal from "../modals/Modal";
 import GroupChatModal from "../modals/GroupChatModal";
-import { useAppDispatch, useAppSelector } from "../../hooks/reduxHooks";
+import { useAppDispatch } from "../../hooks/reduxHooks";
 import { createChat, openChatWithClick } from "../../redux/chatActions";
 
 import styles from "./ChatsList.module.css";

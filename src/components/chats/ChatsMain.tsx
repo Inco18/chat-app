@@ -1,8 +1,8 @@
 import React, { useEffect, useRef } from "react";
-
-import styles from "./ChatsMain.module.css";
 import { useAppSelector } from "../../hooks/reduxHooks";
 import { useParams } from "react-router-dom";
+
+import styles from "./ChatsMain.module.css";
 
 const ChatsMain = (props: { children?: React.ReactNode }) => {
   const containerRef = useRef<HTMLDivElement>(null);

@@ -3,23 +3,20 @@ import { useAppSelector, useAppDispatch } from "../../../hooks/reduxHooks";
 import { ReactComponent as Check } from "../../../assets/check.svg";
 import { ReactComponent as Remove } from "../../../assets/remove.svg";
 import { ReactComponent as SmallSpinner } from "../../../assets/spinner.svg";
-
-import styles from "./General.module.css";
 import { useForm, SubmitHandler } from "react-hook-form";
 import useOutsideClick from "../../../hooks/useOutsideClick";
 import { changeFirstName } from "../../../redux/userActions";
+
+import styles from "./General.module.css";
 
 const FirstName = () => {
   const [isEditing, setIsEditing] = useState(false);
   const { firstName, status } = useAppSelector((store) => store.user);
   const isChanging = status === "changingFirstName";
   const dispatch = useAppDispatch();
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-    reset,
-  } = useForm<{ firstName: string }>({ defaultValues: { firstName: "" } });
+  const { register, handleSubmit, reset } = useForm<{ firstName: string }>({
+    defaultValues: { firstName: "" },
+  });
   const formRef = useRef(null);
 
   const close = () => {

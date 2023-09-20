@@ -1,5 +1,4 @@
-import { Timestamp, doc, getDoc } from "firebase/firestore";
-import { chatStateType } from "../redux/chatSlice";
+import { doc, getDoc } from "firebase/firestore";
 import { auth, db } from "./firebase";
 import { userStateType } from "../redux/userSlice";
 import { signOut } from "firebase/auth";

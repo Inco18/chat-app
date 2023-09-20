@@ -4,10 +4,10 @@ import ReactSlider from "react-slider";
 import { toast } from "react-toastify";
 import { ReactComponent as AddImg } from "../../../assets/addImage.svg";
 import { ReactComponent as SmallSpinner } from "../../../assets/spinner.svg";
-
-import styles from "./General.module.css";
 import { useAppDispatch, useAppSelector } from "../../../hooks/reduxHooks";
 import { deleteProfileImg, uploadProfileImg } from "../../../redux/userActions";
+
+import styles from "./General.module.css";
 
 const ProfileImg = () => {
   const [image, setImage] = useState<File>();

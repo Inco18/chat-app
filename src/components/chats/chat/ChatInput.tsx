@@ -13,8 +13,6 @@ import { ReactComponent as Send } from "../../../assets/send.svg";
 import { ReactComponent as File } from "../../../assets/file.svg";
 import { ReactComponent as Remove } from "../../../assets/remove.svg";
 import { ReactComponent as SmallSpinner } from "../../../assets/spinner.svg";
-
-import styles from "./ChatInput.module.css";
 import ReactTextareaAutosize from "react-textarea-autosize";
 import { CSSTransition, TransitionGroup } from "react-transition-group";
 import EmojiPicker, { Theme, EmojiStyle } from "emoji-picker-react";
@@ -24,6 +22,8 @@ import useOutsideClick from "../../../hooks/useOutsideClick";
 import GifPicker, { TenorImage } from "gif-picker-react";
 import { useAppDispatch, useAppSelector } from "../../../hooks/reduxHooks";
 import { sendMessage } from "../../../redux/chatActions";
+
+import styles from "./ChatInput.module.css";
 
 const errorClassnames = {
   enter: styles.errorEnter,

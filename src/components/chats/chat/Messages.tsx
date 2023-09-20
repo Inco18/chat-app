@@ -1,6 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
-import defaultImg from "../../../assets/default.jpg";
-
+import { useEffect, useRef, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../../hooks/reduxHooks";
 import {
   collection,
@@ -17,13 +15,13 @@ import { ReactComponent as FileImg } from "../../../assets/file.svg";
 import { ReactComponent as SmallSpinner } from "../../../assets/spinner.svg";
 import Lightbox from "yet-another-react-lightbox";
 import "yet-another-react-lightbox/styles.css";
-
-import styles from "./Messages.module.css";
 import { ref } from "firebase/storage";
 import fileDownload from "js-file-download";
 import Fullscreen from "yet-another-react-lightbox/plugins/fullscreen";
 import Download from "yet-another-react-lightbox/plugins/download";
 import Zoom from "yet-another-react-lightbox/plugins/zoom";
+
+import styles from "./Messages.module.css";
 
 const msgDateFormat = new Intl.DateTimeFormat("en-GB", {
   day: "numeric",
@@ -39,6 +37,11 @@ const Messages = () => {
   const [isScrolledToBottom, setIsScrolledToBottom] = useState(true);
   const [lightboxImg, setLightboxImg] = useState("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const messagesLengthRef = useRef(chatState.messages.length);
+
+  useEffect(() => {
+    messagesLengthRef.current = chatState.messages.length;
+  }, [chatState.messages.length]);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView();
@@ -66,7 +69,8 @@ const Messages = () => {
             timestamp: data.timestamp.toDate().toString(),
           })
         );
-        if (chatState.messages.length === 0 && querySnapshot.docs.length === 1)
+        console.log(messagesLengthRef.current);
+        if (messagesLengthRef.current === 0 && querySnapshot.docs.length === 1)
           dispatch(loadMoreMsg(10));
       }
     });

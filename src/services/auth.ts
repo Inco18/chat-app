@@ -1,13 +1,5 @@
-import {
-  EmailAuthProvider,
-  createUserWithEmailAndPassword,
-  reauthenticateWithCredential,
-  signOut,
-} from "firebase/auth";
-import { auth, db } from "./firebase";
-import { toast } from "react-toastify";
-import { IFormInput } from "../components/form/SignUpForm";
-import { Timestamp, doc, getDoc, setDoc } from "firebase/firestore";
+import { EmailAuthProvider, reauthenticateWithCredential } from "firebase/auth";
+import { auth } from "./firebase";
 
 export const reauthenticate = async (password: string) => {
   const user = auth.currentUser;

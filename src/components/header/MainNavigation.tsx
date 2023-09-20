@@ -1,14 +1,12 @@
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useMatch } from "react-router-dom";
 import { ReactComponent as Chats } from "../../assets/chats-main.svg";
 import { ReactComponent as Settings } from "../../assets/gear.svg";
-
-import styles from "./MainNavigation.module.css";
 import { NavLink } from "react-router-dom";
 
-type Props = {};
+import styles from "./MainNavigation.module.css";
 
-const MainNavigation = (props: Props) => {
+const MainNavigation = () => {
   const chatsRef = useRef<HTMLAnchorElement | null>(null);
   const settingsRef = useRef<HTMLAnchorElement | null>(null);
   const [linksWidths, setLinksWidths] = useState<number[]>([]);

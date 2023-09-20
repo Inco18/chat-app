@@ -16,7 +16,6 @@ import {
   Timestamp,
   deleteDoc,
   doc,
-  getDoc,
   setDoc,
   updateDoc,
 } from "firebase/firestore";
@@ -30,7 +29,6 @@ import {
   ref,
   uploadBytes,
 } from "firebase/storage";
-import { RootState } from "./store";
 import { loadUserFromDb } from "../services/firestore";
 
 export const signUp = createAsyncThunk(

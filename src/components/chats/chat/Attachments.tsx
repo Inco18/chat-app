@@ -21,8 +21,9 @@ import { storage } from "../../../services/firebase";
 import { useAppSelector } from "../../../hooks/reduxHooks";
 import Spinner from "../../UI/Spinner";
 import fileDownload from "js-file-download";
-import styles from "./Attachments.module.css";
 import { toast } from "react-toastify";
+
+import styles from "./Attachments.module.css";
 
 function formatBytes(bytes: number, decimals = 2) {
   if (!+bytes) return "0 B";

@@ -1,10 +1,6 @@
-import React, { useEffect, useState } from "react";
-
+import { useEffect, useState } from "react";
 import { ReactComponent as Trash } from "../../../../assets/trash.svg";
-import { ReactComponent as Check } from "../../../../assets/check.svg";
 import AnimateHeight from "react-animate-height";
-
-import styles from "./EventsList.module.css";
 import OptionHeader from "./OptionHeader";
 import {
   collection,
@@ -17,6 +13,8 @@ import {
 import { useAppSelector } from "../../../../hooks/reduxHooks";
 import { db } from "../../../../services/firebase";
 import { toast } from "react-toastify";
+
+import styles from "./EventsList.module.css";
 
 const eventDateFormat = new Intl.DateTimeFormat("en-GB", {
   day: "numeric",

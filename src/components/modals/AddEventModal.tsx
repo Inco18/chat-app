@@ -1,5 +1,4 @@
-import React, { useState } from "react";
-
+import { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { Timestamp, addDoc, collection } from "firebase/firestore";
 import { useAppSelector } from "../../hooks/reduxHooks";

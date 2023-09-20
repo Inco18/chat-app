@@ -1,12 +1,6 @@
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { CSSTransition } from "react-transition-group";
-import defaultImg from "../../../assets/default.png";
 import { ReactComponent as Dots } from "../../../assets/three-dots.svg";
-import { ReactComponent as Magnifier } from "../../../assets/magnifier.svg";
-import { ReactComponent as Arrow } from "../../../assets/arrow.svg";
-import { ReactComponent as Close } from "../../../assets/remove.svg";
-
-import styles from "./Chat.module.css";
 import ChatInput from "./ChatInput";
 import Messages from "./Messages";
 import ChatSidebar from "./ChatSidebar";
@@ -15,6 +9,8 @@ import { useAppDispatch, useAppSelector } from "../../../hooks/reduxHooks";
 import Spinner from "../../UI/Spinner";
 import { openChatWithId } from "../../../redux/chatActions";
 import { auth } from "../../../services/firebase";
+
+import styles from "./Chat.module.css";
 
 const sidebarClassnames = {
   enter: styles.sidebarEnter,

@@ -1,20 +1,16 @@
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ReactComponent as Check } from "../../assets/check.svg";
 import { ReactComponent as Remove } from "../../assets/remove.svg";
 import { ReactComponent as SmallSpinner } from "../../assets/spinner.svg";
 import Switch from "react-switch";
-
 import Modal from "../modals/Modal";
 import { useAppDispatch, useAppSelector } from "../../hooks/reduxHooks";
-import {
-  changeAllowText,
-  changeEmail,
-  changePassword,
-} from "../../redux/userActions";
-import styles from "./Privacy.module.css";
+import { changeAllowText, changePassword } from "../../redux/userActions";
 import { SubmitHandler, useForm } from "react-hook-form";
 import useOutsideClick from "../../hooks/useOutsideClick";
 import DeleteAccountModal from "../modals/DeleteAccountModal";
+
+import styles from "./Privacy.module.css";
 
 const Privacy = () => {
   const [passwordInput, setPasswordInput] = useState(false);

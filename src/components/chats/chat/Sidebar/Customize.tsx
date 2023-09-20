@@ -1,12 +1,12 @@
-import React, { useEffect, useState } from "react";
-
-import styles from "./Customize.module.css";
+import { useEffect, useState } from "react";
 import OptionHeader from "./OptionHeader";
 import AnimateHeight from "react-animate-height";
 import Modal from "../../../modals/Modal";
 import ChangeThemeModal from "../../../modals/ChangeThemeModal";
 import EditNicknamesModal from "../../../modals/EditNicknamesModal";
 import { useAppSelector } from "../../../../hooks/reduxHooks";
+
+import styles from "./Customize.module.css";
 
 const Customize = () => {
   const [customizeVisible, setCustomizeVisible] = useState<boolean>(false);

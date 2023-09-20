@@ -1,4 +1,3 @@
-import React from "react";
 import Logo from "./Logo";
 import MainNavigation from "./MainNavigation";
 import Notifications from "./Notifications";

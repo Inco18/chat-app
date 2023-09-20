@@ -1,11 +1,10 @@
-import React, { useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { CSSTransition } from "react-transition-group";
-import defaultImg from "../../assets/default.png";
 import useOutsideClick from "../../hooks/useOutsideClick";
-
-import styles from "./Profile.module.css";
 import { useAppDispatch, useAppSelector } from "../../hooks/reduxHooks";
 import { logout } from "../../redux/userActions";
+
+import styles from "./Profile.module.css";
 
 const optionsClassnames = {
   enter: styles.enter,

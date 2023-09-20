@@ -1,15 +1,13 @@
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { CSSTransition } from "react-transition-group";
 import { ReactComponent as Bell } from "../../assets/bell.svg";
 import { ReactComponent as Remove } from "../../assets/remove.svg";
-import defaultImg from "../../assets/default.png";
 import useOutsideClick from "../../hooks/useOutsideClick";
 import { Timestamp, doc, onSnapshot, updateDoc } from "firebase/firestore";
 import { auth, db } from "../../services/firebase";
-import { useAppSelector } from "../../hooks/reduxHooks";
+import { toast } from "react-toastify";
 
 import styles from "./Notifications.module.css";
-import { toast } from "react-toastify";
 
 const notificationsClassnames = {
   enter: styles.enter,

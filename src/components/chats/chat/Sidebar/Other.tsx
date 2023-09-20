@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import AnimateHeight from "react-animate-height";
 import { ReactComponent as Star } from "../../../../assets/star.svg";
@@ -7,8 +7,6 @@ import { ReactComponent as Blocked } from "../../../../assets/blocked.svg";
 import { ReactComponent as Trash } from "../../../../assets/trash.svg";
 import { ReactComponent as Group } from "../../../../assets/group.svg";
 import OptionHeader from "./OptionHeader";
-
-import styles from "./Other.module.css";
 import { useAppDispatch, useAppSelector } from "../../../../hooks/reduxHooks";
 import {
   handleBlock,
@@ -19,6 +17,8 @@ import {
 import { auth } from "../../../../services/firebase";
 import Modal from "../../../modals/Modal";
 import ParticipantsModal from "../../../modals/ParticipantsModal";
+
+import styles from "./Other.module.css";
 
 const Other = () => {
   const [otherVisible, setOtherVisible] = useState(false);

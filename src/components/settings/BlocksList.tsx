@@ -1,12 +1,12 @@
 import { useContext, useEffect } from "react";
-
-import styles from "./BlocksList.module.css";
 import SettingsBlock from "./SettingsBlock";
 import General from "./General/General";
 import Privacy from "./Privacy";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useInView } from "react-intersection-observer";
 import { SettingsNavContext } from "../../context/settingsNavContext";
+
+import styles from "./BlocksList.module.css";
 
 const BlocksList = () => {
   const settingsRefs = useContext(SettingsNavContext);

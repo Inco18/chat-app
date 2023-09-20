@@ -1,8 +1,9 @@
-import styles from "./General.module.css";
 import FirstName from "./FirstName";
 import LastName from "./LastName";
 import Email from "./Email";
 import ProfileImg from "./ProfileImg";
+
+import styles from "./General.module.css";
 
 const General = () => {
   return (

@@ -9,10 +9,9 @@ import EventsList from "./Sidebar/EventsList";
 import Other from "./Sidebar/Other";
 import Customize from "./Sidebar/Customize";
 import OptionHeader from "./Sidebar/OptionHeader";
+import { useLocation } from "react-router-dom";
 
 import styles from "./ChatSidebar.module.css";
-import { useLocation } from "react-router-dom";
-import { useAppSelector } from "../../../hooks/reduxHooks";
 
 export type stateType = {
   attachmentsVisible: boolean;
@@ -52,7 +51,6 @@ const ChatSidebar = React.forwardRef(
     });
     const [isLoaded, setIsLoaded] = useState<boolean>(false);
     const { pathname } = useLocation();
-    const chatState = useAppSelector((state) => state.chat);
 
     return (
       <div className={props.className} ref={ref}>

@@ -1,16 +1,11 @@
-import React, { useEffect, useState } from "react";
-import defaultImg from "../../../../assets/default.png";
-import { ReactComponent as Magnifier } from "../../../../assets/magnifier.svg";
+import { useState } from "react";
 import { ReactComponent as Plus } from "../../../../assets/plus.svg";
 import { ReactComponent as Star } from "../../../../assets/star.svg";
 import { ReactComponent as Unblock } from "../../../../assets/unblock.svg";
 import { ReactComponent as Restore } from "../../../../assets/restore.svg";
 import { ReactComponent as Trash } from "../../../../assets/trash.svg";
-
 import Modal from "../../../modals/Modal";
 import AddEventModal from "../../../modals/AddEventModal";
-
-import styles from "./TopContainer.module.css";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../../../hooks/reduxHooks";
 import {
@@ -20,6 +15,8 @@ import {
   handlePermDelete,
 } from "../../../../redux/chatActions";
 import { auth } from "../../../../services/firebase";
+
+import styles from "./TopContainer.module.css";
 
 const TopContainer = () => {
   const [addEventModalOpen, setAddEventModalOpen] = useState<boolean>(false);

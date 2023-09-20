@@ -1,4 +1,3 @@
-import React from "react";
 import { ReactComponent as Arrow } from "../../../../assets/arrow.svg";
 
 import styles from "./OptionHeader.module.css";

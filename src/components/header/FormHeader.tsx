@@ -1,7 +1,6 @@
-import React from "react";
+import Logo from "./Logo";
 
 import styles from "./FormHeader.module.css";
-import Logo from "./Logo";
 
 const FormHeader = () => {
   return (

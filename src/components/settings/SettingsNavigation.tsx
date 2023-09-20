@@ -3,9 +3,9 @@ import { NavLink } from "react-router-dom";
 import SideNav from "../UI/SideNav";
 import { ReactComponent as Gear } from "../../assets/gear.svg";
 import { ReactComponent as Privacy } from "../../assets/privacy.svg";
+import { SettingsNavContext } from "../../context/settingsNavContext";
 
 import styles from "./SettingsNavigation.module.css";
-import { SettingsNavContext } from "../../context/settingsNavContext";
 
 const SettingsNavigation = () => {
   const [generalRef, setGeneralRef] = useState<React.RefObject<unknown>>();

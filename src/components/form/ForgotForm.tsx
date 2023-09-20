@@ -1,12 +1,11 @@
-import React, { useState } from "react";
-
-import styles from "./Form.module.css";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { sendPasswordResetEmail } from "firebase/auth";
 import { auth } from "../../services/firebase";
 import { toast } from "react-toastify";
-import { FirebaseError } from "firebase/app";
+
+import styles from "./Form.module.css";
 
 const ForgotForm = () => {
   const [isSending, setIsSending] = useState(false);

@@ -1,7 +1,6 @@
-import React from "react";
 import { useAppDispatch, useAppSelector } from "../../hooks/reduxHooks";
 import { useForm, SubmitHandler } from "react-hook-form";
-import { changeEmail, deleteAccount } from "../../redux/userActions";
+import { deleteAccount } from "../../redux/userActions";
 import { ReactComponent as SmallSpinner } from "../../assets/spinner.svg";
 
 import styles from "./DeleteAccountModal.module.css";
@@ -14,7 +13,6 @@ const DeleteAccountModal = (props: { closeFn: () => void }) => {
     register,
     handleSubmit,
     formState: { errors },
-    reset,
   } = useForm<{ password: string }>({
     defaultValues: { password: "" },
   });

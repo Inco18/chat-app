@@ -3,11 +3,11 @@ import { useAppSelector, useAppDispatch } from "../../../hooks/reduxHooks";
 import { ReactComponent as Check } from "../../../assets/check.svg";
 import { ReactComponent as Remove } from "../../../assets/remove.svg";
 import { ReactComponent as SmallSpinner } from "../../../assets/spinner.svg";
-
-import styles from "./General.module.css";
 import { useForm, SubmitHandler } from "react-hook-form";
 import useOutsideClick from "../../../hooks/useOutsideClick";
 import { changeEmail } from "../../../redux/userActions";
+
+import styles from "./General.module.css";
 
 const emailRegex =
   /^[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$/;

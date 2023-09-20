@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from "react";
-
-import styles from "./ChangeThemeModal.module.css";
 import { useAppDispatch, useAppSelector } from "../../hooks/reduxHooks";
 import { changeChatTheme } from "../../redux/chatActions";
 import Spinner from "../UI/Spinner";
+
+import styles from "./ChangeThemeModal.module.css";
+
 const colors = [
   ["#5852d6", "#6963db", "#837ee4"],
   ["#12dbdb", "#2beeee", "#71f4f4"],
