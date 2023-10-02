@@ -15,7 +15,7 @@ import { ReactComponent as FileImg } from "../../../assets/file.svg";
 import { ReactComponent as SmallSpinner } from "../../../assets/spinner.svg";
 import Lightbox from "yet-another-react-lightbox";
 import "yet-another-react-lightbox/styles.css";
-import { ref } from "firebase/storage";
+import { getMetadata, ref } from "firebase/storage";
 import fileDownload from "js-file-download";
 import Fullscreen from "yet-another-react-lightbox/plugins/fullscreen";
 import Download from "yet-another-react-lightbox/plugins/download";
@@ -57,19 +57,25 @@ const Messages = () => {
     limit(1)
   );
   useEffect(() => {
-    const unsub = onSnapshot(latestMsgQuery, (querySnapshot) => {
+    const unsub = onSnapshot(latestMsgQuery, async (querySnapshot) => {
       if (
         !querySnapshot.metadata.hasPendingWrites &&
         querySnapshot.docChanges()[0].type !== "modified"
       ) {
         const data = querySnapshot.docs[0].data();
+        const files = await Promise.all(
+          data.filesUrls.map(async (fileUrl: string) => {
+            const metadata = await getMetadata(ref(storage, fileUrl));
+            return { fileUrl, type: metadata.contentType };
+          })
+        );
         dispatch(
           receiveLastMsg({
             ...data,
+            files,
             timestamp: data.timestamp.toDate().toString(),
           })
         );
-        console.log(messagesLengthRef.current);
         if (messagesLengthRef.current === 0 && querySnapshot.docs.length === 1)
           dispatch(loadMoreMsg(10));
       }
@@ -226,43 +232,31 @@ const Messages = () => {
                   {message.text && <p>{message.text}</p>}
                   <div
                     className={
-                      message.filesUrls.some((fileUrl) => {
-                        const fileRef = ref(storage, fileUrl);
-                        return (
-                          fileRef.name.includes(".jpg") ||
-                          fileRef.name.includes(".jpeg") ||
-                          fileRef.name.includes(".png") ||
-                          fileRef.name.includes(".webp")
-                        );
+                      message.files.some((file) => {
+                        return file.type.includes("image");
                       })
                         ? styles.imagesContainer
                         : styles.filesContainer
                     }
                   >
-                    {message.filesUrls.map((fileUrl) => {
-                      const fileRef = ref(storage, fileUrl);
-                      if (
-                        fileRef.name.includes(".jpg") ||
-                        fileRef.name.includes(".jpeg") ||
-                        fileRef.name.includes(".png") ||
-                        fileRef.name.includes(".webp") ||
-                        fileRef.name.includes(".svg")
-                      ) {
+                    {message.files.map((file) => {
+                      const fileRef = ref(storage, file.fileUrl);
+                      if (file.type.includes("image")) {
                         return (
                           <button
-                            key={fileUrl}
+                            key={file.fileUrl}
                             className={styles.imgBtn}
                             onClick={() => {
-                              setLightboxImg(fileUrl);
+                              setLightboxImg(file.fileUrl);
                             }}
                           >
-                            <img src={fileUrl} alt={fileRef.name} />
+                            <img src={file.fileUrl} alt={fileRef.name} />
                           </button>
                         );
                       } else {
                         return (
                           <button
-                            key={fileUrl}
+                            key={file.fileUrl}
                             className={styles.fileBtn}
                             onClick={() => {
                               const xhr = new XMLHttpRequest();
@@ -271,7 +265,7 @@ const Messages = () => {
                                 const blob = xhr.response;
                                 fileDownload(blob, fileRef.name);
                               };
-                              xhr.open("GET", fileUrl);
+                              xhr.open("GET", file.fileUrl);
                               xhr.send();
                             }}
                           >

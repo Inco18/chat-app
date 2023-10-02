@@ -23,7 +23,6 @@ const ForgotForm = () => {
       });
       toast.success("Password reset email has been sent");
     } catch (error: any) {
-      console.log();
       toast.error("Password reset email could not be sent: " + error.message);
     } finally {
       setIsSending(false);

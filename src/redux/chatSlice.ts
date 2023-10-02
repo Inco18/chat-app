@@ -27,6 +27,10 @@ export type chatStateType = {
     text: string;
     gifUrl: string;
     filesUrls: string[];
+    files: {
+      fileUrl: string;
+      type: string;
+    }[];
   }[];
   favourite: string[];
   muted: string[];

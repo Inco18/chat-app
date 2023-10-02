@@ -78,7 +78,7 @@
 
 .imagesContainer {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(8rem, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(4rem, 1fr));
   gap: 0.5rem;
 }
 
@@ -123,18 +123,13 @@
   border-radius: 1rem;
   position: relative;
   cursor: pointer;
-  border: 0;
   transition: 0.1s;
   overflow: hidden;
   padding: 0;
   border: 0;
   background-color: var(--accent-light);
-  width: 100%;
+  width: fit-content;
   height: 100%;
-}
-
-.imgBtn:hover {
-  filter: brightness(0.5);
 }
 
 .imgBtn img {
@@ -142,6 +137,12 @@
   height: 100%;
   object-fit: cover;
   width: auto;
+  max-height: 10rem;
+  transition: 0.1s;
+}
+
+.imgBtn img:hover {
+  filter: brightness(0.5);
 }
 
 .gifMessage {

@@ -56,8 +56,6 @@ const GroupChatModal = (props: { afterChatCreate: (action: any) => void }) => {
   };
 
   const onSubmit: SubmitHandler<{ title: string }> = (data) => {
-    console.log(data);
-    console.log(usersList);
     if (usersList.length < 1) {
       toast.error("You need to add at least 1 person to this chat");
       return;

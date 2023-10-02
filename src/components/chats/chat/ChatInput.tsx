@@ -70,7 +70,6 @@ const ChatInput = () => {
   const handleDrag = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     e.stopPropagation();
-    console.log(e);
     if (e.type === "dragenter" || e.type === "dragover") {
       if (e.dataTransfer.items) {
         if (
@@ -176,7 +175,8 @@ const ChatInput = () => {
   };
 
   const handleSubmit = () => {
-    if (!inputRef.current?.value && filesToSend.length === 0) return;
+    if ((!inputRef.current?.value && filesToSend.length === 0) || isSending)
+      return;
     dispatch(
       sendMessage({
         text: inputRef.current?.value,

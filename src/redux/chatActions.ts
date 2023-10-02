@@ -19,7 +19,12 @@ import {
 import { auth, db, storage } from "../services/firebase";
 import { userStateType } from "./userSlice";
 import { chatStateType } from "./chatSlice";
-import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import {
+  ref,
+  uploadBytes,
+  getDownloadURL,
+  getMetadata,
+} from "firebase/storage";
 import { handleOtherAction, loadChatUsers } from "../services/firestore";
 
 export const createChat = createAsyncThunk<
@@ -27,7 +32,6 @@ export const createChat = createAsyncThunk<
   any,
   { state: { user: userStateType; chat: chatStateType } }
 >("chat/createChat", async (userData: any, { getState }) => {
-  console.log(userData);
   const currentUser = getState().user;
   const dbObject = {
     events: [],
@@ -92,7 +96,6 @@ export const createGroupChat = createAsyncThunk<
   { state: { user: userStateType; chat: chatStateType } }
 >("chat/createGroupChat", async (chatData: any, { getState }) => {
   const currentUser = getState().user;
-  console.log(chatData);
   const dbObject = {
     events: [],
     archived: false,
@@ -123,7 +126,6 @@ export const createGroupChat = createAsyncThunk<
     const url = await getDownloadURL(storageRef);
     dbObject.chatImgUrl = url;
   }
-  console.log(dbObject);
   await setDoc(newChatRef, dbObject);
   await setDoc(doc(db, "messages", newChatRef.id), {});
 
@@ -229,7 +231,6 @@ export const editNickname = createAsyncThunk<
 >(
   "chat/editNickname",
   async (data: { newNickname: string; uid: string }, { getState }) => {
-    console.log(data);
     await updateDoc(doc(db, "chats", getState().chat.id), {
       [`settings.nicknames.${data.uid}`]: data.newNickname,
     });
@@ -384,7 +385,6 @@ export const sendMessage = createAsyncThunk<
     message: { text: string; files: File[]; gifUrl: string },
     { getState }
   ) => {
-    console.log(message);
     const uid = auth.currentUser?.uid;
     const dbMessage = {
       filesUrls: <string[]>[],
@@ -401,6 +401,8 @@ export const sendMessage = createAsyncThunk<
       value: `${message.text}`,
     };
 
+    let files: { fileUrl: String; type: string }[] = [];
+
     if (message.files.length > 0) {
       const urlArr: string[] = await Promise.all(
         message.files.map(async (file) => {
@@ -410,6 +412,7 @@ export const sendMessage = createAsyncThunk<
           );
           const res = await uploadBytes(storageRef, file);
           const url = await getDownloadURL(res.ref);
+          files.push({ fileUrl: url, type: file.type });
           return url;
         })
       );
@@ -430,7 +433,7 @@ export const sendMessage = createAsyncThunk<
       lastMsg: dbLastMsg,
     });
 
-    return { ...dbMessage, timestamp: new Date().toString() };
+    return { ...dbMessage, files, timestamp: new Date().toString() };
   }
 );
 
@@ -449,14 +452,25 @@ export const loadMoreMsg = createAsyncThunk<
   );
 
   const querySnapshot = await getDocs(q);
-  return querySnapshot.docs
-    .map((doc) => {
-      return {
-        ...doc.data(),
-        timestamp: doc.data().timestamp.toDate().toString(),
-      };
-    })
-    .reverse();
+  const returnArr = await Promise.all(
+    querySnapshot.docs
+      .map(async (doc) => {
+        const files = await Promise.all(
+          doc.data().filesUrls.map(async (fileUrl: string) => {
+            const metadata = await getMetadata(ref(storage, fileUrl));
+            return { fileUrl, type: metadata.contentType };
+          })
+        );
+        return {
+          ...doc.data(),
+          files,
+          timestamp: doc.data().timestamp.toDate().toString(),
+        };
+      })
+      .reverse()
+  );
+
+  return returnArr;
 });
 
 export const markLastMsgAsRead = createAsyncThunk<

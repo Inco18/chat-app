@@ -137,7 +137,6 @@ export const changeLastName = createAsyncThunk<
   if (!uid) throw new Error("Could not get user's id");
   const docRef = doc(db, "users", uid);
   const state = thunkApi.getState();
-  console.log(state);
   await updateDoc(docRef, {
     lastName: lastName,
     fullName: `${state.user.firstName.toLowerCase()} ${lastName.toLowerCase()}`,

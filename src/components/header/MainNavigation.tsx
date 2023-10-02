@@ -23,7 +23,6 @@ const MainNavigation = () => {
       }
     } else {
       document.body.onload = () => {
-        console.log(1);
         if (chatsRef.current && settingsRef.current) {
           setLinksWidths([
             chatsRef.current.clientWidth,
